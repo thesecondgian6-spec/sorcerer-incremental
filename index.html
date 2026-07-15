@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cursed Ascendant</title>
+<title>Sorcerer Incremental</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -39,12 +39,8 @@
   .mono{font-family:'JetBrains Mono',monospace;}
   h1,h2,h3,.display{font-family:'Cinzel',serif; letter-spacing:0.03em;}
 
-  /* ---------- layout shells ---------- */
-  #authScreen{
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:24px;
-  }
-  #gameScreen{display:none; max-width:920px; margin:0 auto; padding:16px 16px 60px;}
+  #authScreen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  #gameScreen{display:none; max-width:960px; margin:0 auto; padding:16px 16px 60px;}
 
   .curse-mark{
     position:absolute; inset:0; pointer-events:none; opacity:0.35;
@@ -55,7 +51,6 @@
     mask-image: radial-gradient(circle at center, black, transparent 75%);
   }
 
-  /* seal-corner card frame */
   .seal-frame{
     position:relative;
     background:var(--surface);
@@ -63,10 +58,7 @@
     clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
   }
 
-  /* ---------- auth ---------- */
-  .auth-card{
-    width:100%; max-width:400px; padding:36px 30px;
-  }
+  .auth-card{ width:100%; max-width:400px; padding:36px 30px; }
   .auth-title{font-size:28px; margin:0 0 4px; text-align:center; color:var(--text);}
   .auth-sub{text-align:center; color:var(--text-muted); font-size:13px; margin:0 0 26px;}
   .field{margin-bottom:14px;}
@@ -93,14 +85,10 @@
   .auth-toggle a{color:var(--purple); cursor:pointer; text-decoration:none; font-weight:600;}
   .auth-error{color:var(--special); font-size:13px; margin-top:10px; text-align:center; min-height:16px;}
 
-  /* ---------- top bar ---------- */
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:14px 18px; margin-bottom:14px; position:relative; overflow:hidden;
-  }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px; margin-bottom:14px; position:relative; overflow:hidden; flex-wrap:wrap;}
   .topbar .title{font-size:18px; margin:0; color:var(--text);}
   .topbar .grade{font-size:11px; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em;}
-  .resources{display:flex; gap:16px; flex-wrap:wrap;}
+  .resources{display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
   .resource{display:flex; flex-direction:column; align-items:flex-end;}
   .resource .val{font-size:16px; font-weight:700;}
   .resource .lbl{font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em;}
@@ -109,7 +97,6 @@
   .logout{background:none; border:1px solid var(--border); color:var(--text-muted); padding:6px 10px; border-radius:4px; font-size:12px; cursor:pointer;}
   .logout:hover{color:var(--text); border-color:var(--special);}
 
-  /* ---------- tabs ---------- */
   .tabs{display:flex; gap:6px; margin-bottom:16px; overflow-x:auto;}
   .tab-btn{
     flex:1; text-align:center; padding:10px 8px; background:var(--surface); border:1px solid var(--border);
@@ -120,7 +107,6 @@
   .tab-panel{display:none;}
   .tab-panel.active{display:block;}
 
-  /* ---------- panels ---------- */
   .panel{padding:20px; margin-bottom:14px; position:relative;}
   .panel h2{font-size:15px; margin:0 0 4px; color:var(--text);}
   .panel .sub{font-size:12px; color:var(--text-muted); margin:0 0 18px;}
@@ -132,9 +118,9 @@
   .train-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
   @media (max-width:520px){.train-grid{grid-template-columns:1fr;}}
   .action-card{padding:18px; text-align:center;}
-  .action-card .big-icon{font-size:30px; margin-bottom:6px;}
   .action-card h3{margin:0 0 4px; font-size:14px;}
   .action-card p{margin:0 0 14px; font-size:12px; color:var(--text-muted);}
+  .action-card.locked-card{opacity:0.45;}
   .cooldown-note{font-size:11px; color:var(--text-muted); margin-top:8px;}
 
   .float-gain{
@@ -143,7 +129,6 @@
   }
   @keyframes floatUp{ to{ transform:translateY(-40px); opacity:0; } }
 
-  /* ---------- gacha ---------- */
   .banner-select{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .banner-btn{
     flex:1; min-width:100px; padding:10px; text-align:center; background:var(--surface-2); border:1px solid var(--border);
@@ -170,31 +155,50 @@
   .reveal-name{font-family:'Cinzel',serif; font-size:20px; margin:0 0 8px;}
   .reveal-cat{font-size:12px; color:var(--text-muted); margin-bottom:18px; text-transform:capitalize;}
 
-  /* ---------- inventory ---------- */
-  .inv-tabs{display:flex; gap:8px; margin-bottom:14px;}
+  .inv-tabs{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
   .inv-tab{padding:6px 12px; font-size:12px; border:1px solid var(--border); border-radius:4px; color:var(--text-muted); cursor:pointer;}
   .inv-tab.active{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.18);}
   .item-list{display:flex; flex-direction:column; gap:8px;}
   .item-row{
-    display:flex; align-items:center; justify-content:space-between; padding:10px 14px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px;
     background:var(--surface-2); border:1px solid var(--border); border-radius:5px; font-size:13px;
   }
   .item-name-wrap{display:flex; align-items:center; gap:10px;}
   .item-rarity-tag{font-size:10px; text-transform:uppercase; font-weight:700; padding:2px 7px; border-radius:3px;}
   .empty-note{color:var(--text-muted); font-size:13px; text-align:center; padding:30px 0;}
 
-  /* ---------- profile ---------- */
-  .equip-slots{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:10px;}
-  @media (max-width:520px){.equip-slots{grid-template-columns:1fr;}}
-  .equip-slot{padding:14px; text-align:center; background:var(--surface-2); border:1px solid var(--border); border-radius:6px;}
+  .equip-slots{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:10px;}
+  @media (max-width:700px){.equip-slots{grid-template-columns:1fr 1fr;}}
+  .equip-slot{padding:14px 10px; text-align:center; background:var(--surface-2); border:1px solid var(--border); border-radius:6px;}
   .equip-slot .slot-lbl{font-size:10px; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.06em;}
-  .equip-slot .slot-val{font-size:13px; font-weight:600;}
+  .equip-slot .slot-val{font-size:12px; font-weight:600;}
   .stat-line{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;}
   .stat-line:last-child{border-bottom:none;}
 
+  .arc-badges{display:flex; gap:8px; flex-wrap:wrap;}
+  .arc-badge{ padding:8px 12px; border-radius:4px; font-size:11px; font-weight:600; border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); white-space:nowrap;}
+  .arc-badge.cleared{color:var(--legendary); border-color:var(--legendary);}
+  .arc-badge.current{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.2);}
+  .arc-badge.locked{opacity:0.45;}
+
+  .stage-list{display:flex; flex-direction:column; gap:8px;}
+  .stage-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:5px;}
+  .stage-row.cleared{opacity:0.55;}
+  .stage-row.current{border-color:var(--purple); box-shadow:0 0 0 1px rgba(123,47,247,0.35);}
+  .stage-row.locked{opacity:0.35;}
+  .stage-row.boss{border-color:var(--special);}
+  .stage-info .stage-name{font-size:13px; font-weight:600;}
+  .stage-info .stage-name.boss-name{color:var(--special);}
+  .stage-info .stage-power{font-size:11px; color:var(--text-muted); margin-top:2px;}
+  .stage-status{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted);}
+  .stage-status.win{color:var(--legendary);}
+
+  .wager-row{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+  .wager-row .btn{width:auto; flex:1; min-width:110px;}
+
   .toast{
     position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border);
-    padding:10px 18px; border-radius:6px; font-size:13px; z-index:1100; opacity:0; transition:opacity .3s;
+    padding:10px 18px; border-radius:6px; font-size:13px; z-index:1100; opacity:0; transition:opacity .3s; max-width:90vw; text-align:center;
   }
   .toast.show{opacity:1;}
 </style>
@@ -205,23 +209,15 @@
 <div id="authScreen">
   <div class="seal-frame auth-card">
     <div class="curse-mark"></div>
-    <h1 class="auth-title">Cursed Ascendant</h1>
+    <h1 class="auth-title">Sorcerer Incremental</h1>
     <p class="auth-sub">Train. Bind curses. Ascend the grades.</p>
 
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="authEmail" autocomplete="email" placeholder="you@example.com" />
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="authPassword" autocomplete="current-password" placeholder="••••••••" />
-    </div>
+    <div class="field"><label>Email</label><input type="email" id="authEmail" autocomplete="email" placeholder="you@example.com" /></div>
+    <div class="field"><label>Password</label><input type="password" id="authPassword" autocomplete="current-password" placeholder="••••••••" /></div>
 
     <button class="btn" id="authSubmitBtn">Enter the Curtain</button>
     <div class="auth-error" id="authError"></div>
-    <div class="auth-toggle">
-      <span id="authToggleText">New sorcerer?</span> <a id="authToggleLink">Create an account</a>
-    </div>
+    <div class="auth-toggle"><span id="authToggleText">New sorcerer?</span> <a id="authToggleLink">Create an account</a></div>
   </div>
 </div>
 
@@ -231,7 +227,7 @@
   <div class="seal-frame topbar">
     <div class="curse-mark"></div>
     <div>
-      <h1 class="title display">Cursed Ascendant</h1>
+      <h1 class="title display">Sorcerer Incremental</h1>
       <div class="grade mono" id="gradeLabel">Grade 4 Sorcerer</div>
     </div>
     <div class="resources">
@@ -243,9 +239,12 @@
 
   <div class="tabs">
     <div class="tab-btn active" data-tab="train">Train</div>
+    <div class="tab-btn" data-tab="missions">Missions</div>
+    <div class="tab-btn" data-tab="story">Story</div>
     <div class="tab-btn" data-tab="gacha">Gacha</div>
+    <div class="tab-btn" data-tab="shop">Shop</div>
     <div class="tab-btn" data-tab="inventory">Inventory</div>
-    <div class="tab-btn" data-tab="profile">Profile</div>
+    <div class="tab-btn" data-tab="stats">Stats</div>
   </div>
 
   <!-- TRAIN TAB -->
@@ -260,27 +259,92 @@
       <div class="train-grid">
         <div class="seal-frame action-card">
           <div class="curse-mark"></div>
-          <div class="big-icon">⚔️</div>
           <h3>Train</h3>
-          <p>Hone your technique. Instant, no cooldown.</p>
+          <p>Tap to hone your technique. Instant, no cooldown.</p>
           <button class="btn" id="trainBtn">Train</button>
         </div>
-        <div class="seal-frame action-card">
-          <div class="curse-mark"></div>
-          <div class="big-icon">🩸</div>
-          <h3>Curse Mission</h3>
-          <p>Exorcise a curse for tickets + bonus energy.</p>
-          <button class="btn blood" id="missionBtn">Embark</button>
-          <div class="cooldown-note" id="missionCooldownNote"></div>
-        </div>
       </div>
+    </div>
+
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Activities</h2>
+      <p class="sub">Start an activity, wait for it to complete, and it pays out automatically. Higher-tier activities unlock as you rank up.</p>
+      <div class="train-grid" id="activityList"></div>
     </div>
 
     <div class="seal-frame panel" id="rebirthPanel" style="display:none;">
       <div class="curse-mark"></div>
       <h2>Reincarnation</h2>
-      <p class="sub">You have reached the ceiling of your current bloodline. Reincarnate to reset your grade in exchange for a permanent power multiplier. Your inventory and equipped items are kept.</p>
-      <button class="btn blood" id="rebirthBtn">Reincarnate (+15% permanent power)</button>
+      <p class="sub">You have reached the ceiling of your current bloodline. Reincarnate to reset your grade in exchange for a permanent, compounding power multiplier. Your inventory and equipped items are kept.</p>
+      <button class="btn blood" id="rebirthBtn">Reincarnate (×1.15 permanent power)</button>
+    </div>
+  </div>
+
+  <!-- MISSIONS TAB -->
+  <div class="tab-panel" id="tab-missions">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Missions</h2>
+      <p class="sub">Hunt curses, take assignments from Jujutsu High, and answer contracts from the higher-ups. Each mission pays out instantly and starts its own cooldown.</p>
+      <div class="train-grid" id="missionList"></div>
+    </div>
+  </div>
+
+  <!-- STORY TAB -->
+  <div class="tab-panel" id="tab-story">
+    <div class="inv-tabs" id="storySubTabs">
+      <div class="inv-tab active" data-sub="main">Main Story</div>
+      <div class="inv-tab" data-sub="culling">Culling Games</div>
+      <div class="inv-tab" data-sub="fightclub">Fight Club</div>
+    </div>
+
+    <div id="storySub-main">
+      <div class="seal-frame panel">
+        <div class="curse-mark"></div>
+        <h2>Story Arcs</h2>
+        <p class="sub">Battle curse spirits and curse users through each arc. Fell a boss and push toward Ryomen Sukuna, King of Curses.</p>
+        <div class="arc-badges" id="arcBadges"></div>
+      </div>
+      <div class="seal-frame panel" id="arcPanel">
+        <div class="curse-mark"></div>
+        <h2 id="arcTitle">Arc</h2>
+        <p class="sub" id="arcSub"></p>
+        <div class="stage-list" id="stageList"></div>
+      </div>
+      <div class="seal-frame panel" id="storyDonePanel" style="display:none;">
+        <div class="curse-mark"></div>
+        <h2>King of Curses, Fallen</h2>
+        <p class="sub">You have defeated Ryomen Sukuna and cleared every arc. Keep training and reincarnating — future arcs are on the way.</p>
+      </div>
+    </div>
+
+    <div id="storySub-culling" style="display:none;">
+      <div class="seal-frame panel">
+        <div class="curse-mark"></div>
+        <h2>The Culling Game</h2>
+        <p class="sub">An endless colony ladder. Each win raises your Colony Rank and the strength of the next rival.</p>
+        <div class="stat-line"><span>Colony Rank</span><span class="mono" id="cullingRank">0</span></div>
+        <div class="stat-line"><span>Next Rival</span><span class="mono" id="cullingOpponent">—</span></div>
+        <div class="stat-line"><span>Your Power / Required</span><span class="mono" id="cullingReq">0 / 0</span></div>
+        <button class="btn blood" id="cullingChallengeBtn" style="margin-top:14px;">Challenge Rival</button>
+      </div>
+    </div>
+
+    <div id="storySub-fightclub" style="display:none;">
+      <div class="seal-frame panel">
+        <div class="curse-mark"></div>
+        <h2>Hakari's Fight Club</h2>
+        <p class="sub">Idle Death Gamble: wager Cursed Energy on a fight. Win and your streak — and payouts — grow. Lose and it resets.</p>
+        <div class="stat-line"><span>Win Streak</span><span class="mono" id="fcStreak">0</span></div>
+        <div class="stat-line"><span>Win Chance</span><span class="mono" id="fcWinChance">50%</span></div>
+        <div class="stat-line"><span>Opponent Power</span><span class="mono" id="fcOppPower">0</span></div>
+        <div class="wager-row">
+          <button class="btn secondary" data-wager="0.1">Wager 10%</button>
+          <button class="btn secondary" data-wager="0.25">Wager 25%</button>
+          <button class="btn blood" data-wager="0.5">Wager 50%</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -289,21 +353,29 @@
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Binding Ritual</h2>
-      <p class="sub">Spend Domain Tickets to bind a cursed technique, awaken a clan bloodline, or manifest a unique cursed energy trait.</p>
-
-      <div class="banner-select">
-        <div class="banner-btn active" data-banner="technique">Cursed Techniques</div>
-        <div class="banner-btn" data-banner="clan">Clans</div>
-        <div class="banner-btn" data-banner="trait">CE Traits</div>
-      </div>
-
+      <p class="sub">Spend Domain Tickets to bind a cursed technique, awaken a clan bloodline, recruit a companion, forge a cursed tool, or manifest a unique cursed energy trait.</p>
+      <div class="banner-select" id="bannerSelect"></div>
       <div class="roll-cost">10 tickets per roll · 90 tickets for 10</div>
       <div class="roll-buttons">
         <button class="btn" id="rollOneBtn">Roll ×1</button>
         <button class="btn secondary" id="rollTenBtn">Roll ×10</button>
       </div>
-
       <div class="rarity-table" id="rarityTable"></div>
+    </div>
+  </div>
+
+  <!-- SHOP TAB -->
+  <div class="tab-panel" id="tab-shop">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Curio Shop</h2>
+      <p class="sub" id="shopCountdown">Restocks in —</p>
+      <div class="item-list" id="shopList"></div>
+    </div>
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Active Boosts</h2>
+      <div class="rarity-table" id="activeBoosts"></div>
     </div>
   </div>
 
@@ -313,25 +385,17 @@
       <div class="curse-mark"></div>
       <h2>Inventory</h2>
       <p class="sub">Everything you've bound. Equip one of each category to gain its passive bonus.</p>
-      <div class="inv-tabs">
-        <div class="inv-tab active" data-cat="technique">Techniques</div>
-        <div class="inv-tab" data-cat="clan">Clans</div>
-        <div class="inv-tab" data-cat="trait">Traits</div>
-      </div>
+      <div class="inv-tabs" id="invTabs"></div>
       <div class="item-list" id="invList"></div>
     </div>
   </div>
 
-  <!-- PROFILE TAB -->
-  <div class="tab-panel" id="tab-profile">
+  <!-- STATS TAB -->
+  <div class="tab-panel" id="tab-stats">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Sorcerer Profile</h2>
-      <div class="equip-slots">
-        <div class="equip-slot"><div class="slot-lbl">Technique</div><div class="slot-val" id="eqTechnique">None</div></div>
-        <div class="equip-slot"><div class="slot-lbl">Clan</div><div class="slot-val" id="eqClan">None</div></div>
-        <div class="equip-slot"><div class="slot-lbl">CE Trait</div><div class="slot-val" id="eqTrait">None</div></div>
-      </div>
+      <div class="equip-slots" id="equipSlots"></div>
     </div>
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
@@ -339,16 +403,21 @@
       <div class="stat-line"><span>Grade</span><span class="mono" id="statGrade">Grade 4</span></div>
       <div class="stat-line"><span>Level</span><span class="mono" id="statLevel">1</span></div>
       <div class="stat-line"><span>Reincarnations</span><span class="mono" id="statRebirths">0</span></div>
-      <div class="stat-line"><span>Total power multiplier</span><span class="mono" id="statMult">×1.00</span></div>
-      <div class="stat-line"><span>Techniques bound</span><span class="mono" id="statTechCount">0</span></div>
-      <div class="stat-line"><span>Clans awakened</span><span class="mono" id="statClanCount">0</span></div>
-      <div class="stat-line"><span>Traits manifested</span><span class="mono" id="statTraitCount">0</span></div>
+      <div class="stat-line"><span>Story progress</span><span class="mono" id="statStory">0 / 0</span></div>
+      <div class="stat-line"><span>Cursed Energy multiplier</span><span class="mono" id="statMult">×1.00</span></div>
+      <div class="stat-line"><span>Battle power</span><span class="mono" id="statPower">0</span></div>
+      <div id="invCountStats"></div>
+    </div>
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Upgrades</h2>
+      <p class="sub">Spend Cursed Energy to permanently strengthen your sorcerer.</p>
+      <div class="item-list" id="upgradeList"></div>
     </div>
   </div>
 
 </div>
 
-<!-- reveal modal -->
 <div class="reveal-overlay" id="revealOverlay">
   <div class="seal-frame reveal-card">
     <div class="curse-mark"></div>
@@ -362,17 +431,11 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   CONFIG — fill these in from Supabase → Project Settings → API
-   ============================================================ */
 const SUPABASE_URL = "https://cbtkbkfuwbnggnjodnce.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidGtia2Z1d2JuZ2duam9kbmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMDUzODMsImV4cCI6MjA5OTY4MTM4M30.rhWkT2ZqjEBvcrn8hEtNflB-arUmuZ9gWmLCPBoot5o";
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ============================================================
-   GAME DATA
-   ============================================================ */
 const RARITIES = [
   { key:'common',       label:'Common',       weight:55, color:'var(--common)',    bonus:0.02 },
   { key:'rare',         label:'Rare',         weight:27, color:'var(--rare)',      bonus:0.05 },
@@ -383,6 +446,14 @@ const RARITIES = [
 const RARITY_BY_KEY = Object.fromEntries(RARITIES.map(r=>[r.key,r]));
 const TOTAL_WEIGHT = RARITIES.reduce((s,r)=>s+r.weight,0);
 
+const CATEGORY_META = [
+  { key:'technique', label:'Cursed Techniques' },
+  { key:'clan',       label:'Clans' },
+  { key:'companion',  label:'Companions' },
+  { key:'tool',        label:'Cursed Tools' },
+  { key:'trait',       label:'CE Traits' },
+];
+
 const POOLS = {
   technique: {
     common:['Cursed Energy Manipulation','Reinforcement','Simple Domain Sense','Basic Barrier Technique'],
@@ -392,39 +463,130 @@ const POOLS = {
     special_grade:['Six Eyes + Limitless','Malevolent Shrine','Agito','Disaster Flames'],
   },
   clan:{
-    common:['Civilian Bloodline','Minor Sorcerer Family','Exorcist Lineage','Talisman Crafters'],
-    rare:['Kamo Branch Family','Zen\'in Branch Family','Inumaki Minor Line','Iori Branch'],
-    epic:['Kamo Clan','Todo Family','Okkotsu Line','Fushiguro Branch'],
-    legendary:['Zen\'in Clan','Gojo Distant Branch','Kamo Main House','Zen\'in Elder Line'],
-    special_grade:['Gojo Clan (Six Eyes Bloodline)','Star Plasma Vessel Lineage','Original Zen\'in Bloodline','Death Painting Lineage'],
+    common:['Unaffiliated Sorcerer Family','Minor Branch Family','Exorcist Lineage','Talisman Crafters'],
+    rare:['Kirara Family','Miwa Family','Zen\'in Branch Family','Iori Branch'],
+    epic:['Inumaki Clan','Todo Family','Kamo Branch House','Fushiguro Branch (Zen\'in Offshoot)'],
+    legendary:['Kamo Clan','Zen\'in Clan','Zen\'in Elder Line','Kamo Main House'],
+    special_grade:['Gojo Clan (Six Eyes Bloodline)','Zen\'in Main Family (Ten Shadows Heir)','Kamo Clan Head Line','Death-Defying Sorcerer Bloodline'],
   },
-  trait:{
+  companion:{
+    common:['Grade 3 Trainee','Support Staff Sorcerer','Jujutsu High Underclassman','Exorcist Apprentice'],
+    rare:['Yuji Itadori (Trainee)','Nobara Kugisaki','Megumi Fushiguro','Panda'],
+    epic:['Maki Zenin','Toge Inumaki','Aoi Todo','Kento Nanami'],
+    legendary:['Yuta Okkotsu','Mei Mei','Utahime Iori','Kento Nanami (Overtime)'],
+    special_grade:['Satoru Gojo','Yuki Tsukumo','Masamichi Yaga','Suguru Geto (Past)'],
+  },
+  tool:{
+    common:['Training Sword','Basic Talisman','Cursed Tool Fragment','Novice Blade'],
+    rare:['Cursed Wrench','Reinforced Katana','Binding Rope','Warding Charm'],
+    epic:['Nue Feather Blade','Cursed Speech Charm','Chainsaw (Cursed)','Inverted Spear Shard'],
+    legendary:['Playful Cloud','Split Soul Katana','Dismantle Fragment','Hairpin (Kirara Style)'],
+    special_grade:['Sukuna\'s Finger (Fragment)','Inverted Spear of Heaven','Dismantle / Cleave','Prison Realm Shard'],
+  },
+  trait: {
     common:['Stable Output','Faint Aura','Modest Reserves','Basic Control'],
     rare:['Overflowing Reserves','Precise Control','Sharp Aura','Adaptive Flow'],
     epic:['Explosive Output','Compressed Energy','Resonant Aura','Rapid Regeneration'],
     legendary:['Bottomless Reserves','Perfect Control','Overwhelming Presence','Twin Meridians'],
-    special_grade:['Six Eyes Clarity','Cursed Womb Bloodline','Immeasurable Aura','Reverse Technique Affinity'],
+    special_grade:['Six Eyes Clarity','Innately Special Grade','Immeasurable Aura','Reverse Cursed Technique Affinity'],
   }
 };
 
 const GRADES = ['Grade 4','Grade 3','Grade 2','Grade 1','Semi-Special Grade','Special Grade'];
 const REBIRTH_LEVEL = 60;
-const MISSION_COOLDOWN_MS = 45000;
 
-/* ============================================================
-   STATE
-   ============================================================ */
+const UPGRADE_DEFS = [
+  { key:'strength',  name:'Strength',            icon:'💪', desc:'Increases battle power.' },
+  { key:'technique', name:'Cursed Technique',     icon:'🌀', desc:'Increases battle power and Cursed Energy gain.' },
+  { key:'energy',     name:'Cursed Energy Control',icon:'🔮', desc:'Increases Cursed Energy gain from all sources.' },
+  { key:'stamina',    name:'Stamina',              icon:'🫁', desc:'Increases rewards from Activities and Missions.' },
+  { key:'speed',       name:'Speed',                icon:'⚡', desc:'Reduces Activity and Mission cooldowns.' },
+  { key:'insight',     name:'Domain Insight',       icon:'👁️', desc:'Increases Domain Ticket gain from Missions.' },
+];
+
+const ACTIVITY_DEFS = [
+  { key:'meditation', name:'Cursed Energy Meditation', unlockGrade:0, duration:20,  reward:40 },
+  { key:'conditioning', name:'Physical Conditioning',    unlockGrade:0, duration:30,  reward:55 },
+  { key:'sparring',      name:'Shadow Sparring',          unlockGrade:1, duration:45,  reward:95 },
+  { key:'barrier',        name:'Barrier Study',            unlockGrade:2, duration:60,  reward:160 },
+  { key:'domain',          name:'Domain Analysis',          unlockGrade:3, duration:90,  reward:280 },
+  { key:'speech',           name:'Cursed Speech Drills',     unlockGrade:4, duration:120, reward:460 },
+  { key:'sixeyes',           name:'Advanced Technique Training', unlockGrade:5, duration:180, reward:760 },
+];
+
+const MISSION_DEFS = [
+  { key:'hunt',        name:'Hunt Curses',              desc:'Track down and exorcise a wandering curse.',        unlockGrade:0, cooldown:30,  rewardCE:60,  rewardTickets:[0,1] },
+  { key:'assignment',   name:'Jujutsu High Assignment', desc:'Complete a task assigned by faculty.',                unlockGrade:1, cooldown:90,  rewardCE:180, rewardTickets:[1,2] },
+  { key:'civilians',     name:'Save Civilians',          desc:'Respond to a curse manifestation endangering civilians.', unlockGrade:2, cooldown:150, rewardCE:340, rewardTickets:[1,2] },
+  { key:'contract',       name:'Higher-Up Contract',      desc:'Take on a high-priority contract from the higher-ups.', unlockGrade:4, cooldown:300, rewardCE:700, rewardTickets:[2,4] },
+];
+
+const SHOP_POOL = [
+  { id:'ce_surge',     name:'CE Surge Charm',              desc:'+25% Cursed Energy gain for 30 minutes.',   cost:600,  currency:'ce',      effectType:'boost',  boostType:'ce',    bonus:0.25, minutes:30 },
+  { id:'battle_focus',  name:'Battle Focus Talisman',       desc:'+25% battle power for 30 minutes.',          cost:600,  currency:'ce',      effectType:'boost',  boostType:'power', bonus:0.25, minutes:30 },
+  { id:'ticket_pouch',   name:'Domain Ticket Pouch',         desc:'Instantly grants 5 Domain Tickets.',         cost:900,  currency:'ce',      effectType:'tickets', amount:5 },
+  { id:'exp_scroll',      name:'Cursed Technique Manual',     desc:'Instantly grants 400 EXP.',                  cost:450,  currency:'ce',      effectType:'exp',     amount:400 },
+  { id:'tool_common',      name:'Reinforced Talisman Set',     desc:'Instantly binds a common-grade Cursed Tool.', cost:350,  currency:'ce',      effectType:'item',    category:'tool', rarity:'common' },
+  { id:'tool_rare',         name:'Enchanted Blade Cache',       desc:'Instantly binds a rare-grade Cursed Tool.',  cost:1400, currency:'ce',      effectType:'item',    category:'tool', rarity:'rare' },
+  { id:'ce_cache',           name:'Cursed Energy Cache',         desc:'Instantly grants a burst of Cursed Energy.', cost:5,    currency:'tickets', effectType:'currency', amount:1200 },
+  { id:'mega_boost',          name:'Overflowing Vessel Draught',  desc:'+50% Cursed Energy gain for 15 minutes.',   cost:15,   currency:'tickets', effectType:'boost',   boostType:'ce', bonus:0.5, minutes:15 },
+];
+const SHOP_REFRESH_MS = 6 * 3600 * 1000;
+
+const ARCS_RAW = [
+  { name:'Introduction', stages:[
+    { name:'Grade 4 Curse' }, { name:'Grade 3 Curse' }, { name:'Grade 2 Curse' },
+    { name:'Cursed Womb: Death Painting (Eso)' }, { name:'Cursed Womb: Death Painting (Kechizu)', boss:true },
+  ]},
+  { name:'Vs. Mahito', stages:[
+    { name:'Grade 2 Curse Swarm' }, { name:'Grade 1 Curse' }, { name:'Mahito\'s Transfigured Human' }, { name:'Mahito', boss:true },
+  ]},
+  { name:'Kyoto Sister School Exchange', stages:[
+    { name:'Kamo Clan Branch Curse User' }, { name:'Mechamaru (Kokichi Muta)' }, { name:'Aoi Todo (Sparring Match)' }, { name:'Hanami', boss:true },
+  ]},
+  { name:'Shibuya Incident', stages:[
+    { name:'Grade 1 Curse Swarm' }, { name:'Jogo' }, { name:'Dagon' }, { name:'Choso' }, { name:'Mahito, Perfected', boss:true },
+  ]},
+  { name:'Perfect Preparation', stages:[
+    { name:'Kenjaku\'s Puppet' }, { name:'Culling Game Rule Enforcer' }, { name:'Rogue Sorcerer (Colony Participant)' }, { name:'Kenjaku', boss:true },
+  ]},
+  { name:'The Culling Game', stages:[
+    { name:'Culling Game Player (Cursed Tool User)' }, { name:'Culling Game Player (Special Grade Vessel)' }, { name:'Hajime Kashimo (Sparring)' }, { name:'Hajime Kashimo, Serious', boss:true },
+  ]},
+  { name:'Shinjuku Showdown', stages:[
+    { name:'Cursed Corpse Swarm' }, { name:'Uraume' }, { name:'Ryomen Sukuna (Fraction of Power)' }, { name:'Ryomen Sukuna, King of Curses', boss:true },
+  ]},
+];
+const FLAT_STAGES = [];
+(function buildStages(){
+  let gi = 0;
+  ARCS_RAW.forEach((arc, arcIndex)=>{
+    arc.stages.forEach((stage, stageIndexInArc)=>{
+      let req = Math.round(60 * Math.pow(1.18, gi));
+      if(stage.boss) req = Math.round(req * 2.2);
+      FLAT_STAGES.push({
+        globalIndex: gi, arcIndex, arcName: arc.name, stageIndexInArc,
+        name: stage.name, isBoss: !!stage.boss, requiredPower: req,
+        rewardCE: Math.round(req * 0.35),
+        rewardTickets: stage.boss ? 5 + Math.floor(gi/6) : 1 + Math.floor(gi/5),
+      });
+      gi++;
+    });
+  });
+})();
+
+const COLONY_OPPONENTS = ['Colony Rival — Cursed Tool Wielder','Colony Rival — Domain Tactician','Colony Rival — Special Grade Vessel','Colony Rival — Veteran Player'];
+function colonyRequiredPower(rank){ return Math.round(400 * Math.pow(1.16, rank)); }
+function fightclubOpponentPower(streak){ return Math.round(600 * Math.pow(1.18, streak)); }
+
 let session = null;
-let player = null;        // player_stats row
-let inventory = [];        // player_inventory rows
+let player = null;
+let inventory = [];
 let currentBanner = 'technique';
 let currentInvCat = 'technique';
 let autosaveTimer = null;
-let missionTickTimer = null;
+let tickTimer = null;
 
-/* ============================================================
-   AUTH UI
-   ============================================================ */
 let authMode = 'signin';
 const authToggleText = document.getElementById('authToggleText');
 const authToggleLink = document.getElementById('authToggleLink');
@@ -434,13 +596,9 @@ const authError = document.getElementById('authError');
 authToggleLink.addEventListener('click', ()=>{
   authMode = authMode === 'signin' ? 'signup' : 'signin';
   if(authMode === 'signup'){
-    authToggleText.textContent = 'Already bound?';
-    authToggleLink.textContent = 'Sign in';
-    authSubmitBtn.textContent = 'Create Account';
+    authToggleText.textContent = 'Already bound?'; authToggleLink.textContent = 'Sign in'; authSubmitBtn.textContent = 'Create Account';
   } else {
-    authToggleText.textContent = 'New sorcerer?';
-    authToggleLink.textContent = 'Create an account';
-    authSubmitBtn.textContent = 'Enter the Curtain';
+    authToggleText.textContent = 'New sorcerer?'; authToggleLink.textContent = 'Create an account'; authSubmitBtn.textContent = 'Enter the Curtain';
   }
   authError.textContent = '';
 });
@@ -450,17 +608,12 @@ authSubmitBtn.addEventListener('click', async ()=>{
   const password = document.getElementById('authPassword').value;
   authError.textContent = '';
   if(!email || !password){ authError.textContent = 'Enter an email and password.'; return; }
-
   authSubmitBtn.disabled = true;
   try{
     if(authMode === 'signup'){
       const { data, error } = await sb.auth.signUp({ email, password });
       if(error) throw error;
-      if(!data.session){
-        authError.textContent = 'Account created. Check your email to confirm, then sign in.';
-        authSubmitBtn.disabled = false;
-        return;
-      }
+      if(!data.session){ authError.textContent = 'Account created. Check your email to confirm, then sign in.'; authSubmitBtn.disabled = false; return; }
       session = data.session;
     } else {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
@@ -476,8 +629,7 @@ authSubmitBtn.addEventListener('click', async ()=>{
 });
 
 document.getElementById('logoutBtn').addEventListener('click', async ()=>{
-  clearInterval(autosaveTimer);
-  clearInterval(missionTickTimer);
+  clearInterval(autosaveTimer); clearInterval(tickTimer);
   await savePlayer();
   await sb.auth.signOut();
   session = null; player = null; inventory = [];
@@ -485,39 +637,36 @@ document.getElementById('logoutBtn').addEventListener('click', async ()=>{
   document.getElementById('authScreen').style.display = 'flex';
 });
 
-/* ============================================================
-   BOOT — check for existing session
-   ============================================================ */
 (async function boot(){
   const { data } = await sb.auth.getSession();
-  if(data.session){
-    session = data.session;
-    await enterGame();
-  }
+  if(data.session){ session = data.session; await enterGame(); }
 })();
 
 async function enterGame(){
   await loadPlayer();
+  initDynamicUI();
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'block';
   renderAll();
   autosaveTimer = setInterval(savePlayer, 15000);
-  missionTickTimer = setInterval(updateMissionCooldownUI, 1000);
+  tickTimer = setInterval(tickLoop, 1000);
 }
 
-/* ============================================================
-   DATA LOAD / SAVE
-   ============================================================ */
 async function loadPlayer(){
   const uid = session.user.id;
-
-  let { data: stats, error } = await sb.from('player_stats').select('*').eq('user_id', uid).maybeSingle();
+  let { data: stats } = await sb.from('player_stats').select('*').eq('user_id', uid).maybeSingle();
   if(!stats){
-    // fallback in case the DB trigger hasn't fired yet
     const insertRes = await sb.from('player_stats').insert({ user_id: uid }).select().single();
     stats = insertRes.data;
   }
   player = stats;
+  player.upgrades = player.upgrades || {};
+  player.activities = player.activities || {};
+  player.missions = player.missions || {};
+  player.shop_state = player.shop_state || {};
+  player.boosts = player.boosts || [];
+  player.colony_rank = player.colony_rank || 0;
+  player.fightclub_streak = player.fightclub_streak || 0;
 
   const { data: inv } = await sb.from('player_inventory').select('*').eq('user_id', uid).order('obtained_at', { ascending:false });
   inventory = inv || [];
@@ -532,42 +681,93 @@ async function savePlayer(){
     exp: Math.floor(player.exp),
     level: player.level,
     rebirths: player.rebirths,
-    equipped_technique: player.equipped_technique,
-    equipped_technique_rarity: player.equipped_technique_rarity,
-    equipped_clan: player.equipped_clan,
-    equipped_clan_rarity: player.equipped_clan_rarity,
-    equipped_trait: player.equipped_trait,
-    equipped_trait_rarity: player.equipped_trait_rarity,
-    last_mission_at: player.last_mission_at,
+    story_progress: storyProgress(),
+    colony_rank: player.colony_rank,
+    fightclub_streak: player.fightclub_streak,
+    equipped_technique: player.equipped_technique, equipped_technique_rarity: player.equipped_technique_rarity,
+    equipped_clan: player.equipped_clan, equipped_clan_rarity: player.equipped_clan_rarity,
+    equipped_companion: player.equipped_companion, equipped_companion_rarity: player.equipped_companion_rarity,
+    equipped_tool: player.equipped_tool, equipped_tool_rarity: player.equipped_tool_rarity,
+    equipped_trait: player.equipped_trait, equipped_trait_rarity: player.equipped_trait_rarity,
+    upgrades: player.upgrades,
+    activities: player.activities,
+    missions: player.missions,
+    shop_state: player.shop_state,
+    boosts: player.boosts,
     updated_at: new Date().toISOString(),
   }).eq('user_id', uid);
 }
 
-/* ============================================================
-   DERIVED STATS
-   ============================================================ */
 function gradeIndex(){ return Math.min(Math.floor((player.level-1)/10), GRADES.length-1); }
 function gradeName(){ return GRADES[gradeIndex()]; }
 function equipBonus(){
   let b = 0;
-  if(player.equipped_technique_rarity) b += RARITY_BY_KEY[player.equipped_technique_rarity].bonus;
-  if(player.equipped_clan_rarity) b += RARITY_BY_KEY[player.equipped_clan_rarity].bonus;
-  if(player.equipped_trait_rarity) b += RARITY_BY_KEY[player.equipped_trait_rarity].bonus;
+  CATEGORY_META.forEach(c=>{
+    const rk = player['equipped_'+c.key+'_rarity'];
+    if(rk && RARITY_BY_KEY[rk]) b += RARITY_BY_KEY[rk].bonus;
+  });
   return b;
 }
-function rebirthMult(){ return 1 + player.rebirths * 0.15; }
-function totalMult(){ return (1 + equipBonus()) * rebirthMult(); }
+function upg(key){ return (player.upgrades && player.upgrades[key]) || 0; }
+function activeBoostBonus(type){
+  return (player.boosts||[]).filter(b=> b.type===type && new Date(b.expiresAt).getTime() > Date.now()).reduce((s,b)=>s+b.bonus,0);
+}
+function ceMult(){ return 1 + upg('energy')*0.02 + upg('technique')*0.01 + activeBoostBonus('ce'); }
+function battleMult(){ return 1 + upg('strength')*0.03 + upg('technique')*0.02 + activeBoostBonus('power'); }
+function rewardMult(){ return 1 + upg('stamina')*0.02; }
+function speedMult(){ return Math.max(0.4, 1 - upg('speed')*0.015); }
+function ticketBonusChance(){ return Math.min(0.5, upg('insight')*0.01); }
+function rebirthMult(){ return Math.pow(1.15, player.rebirths); }
+function totalMult(){ return (1 + equipBonus()) * rebirthMult() * ceMult(); }
+function powerScore(){ return Math.round(player.level * 12 * (1 + equipBonus()) * rebirthMult() * battleMult()); }
 function expToNext(){ return 50 + (player.level-1) * 35; }
+function storyProgress(){ return player.story_progress || 0; }
 
-/* ============================================================
-   ACTIONS
-   ============================================================ */
 function gainExpAndLevel(exp){
   player.exp += exp;
-  while(player.exp >= expToNext()){
-    player.exp -= expToNext();
-    player.level += 1;
-  }
+  while(player.exp >= expToNext()){ player.exp -= expToNext(); player.level += 1; }
+}
+
+function initDynamicUI(){
+  document.getElementById('bannerSelect').innerHTML = CATEGORY_META.map((c,i)=>
+    `<div class="banner-btn ${i===0?'active':''}" data-banner="${c.key}">${c.label}</div>`).join('');
+  document.querySelectorAll('.banner-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.banner-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentBanner = btn.dataset.banner;
+    });
+  });
+
+  document.getElementById('invTabs').innerHTML = CATEGORY_META.map((c,i)=>
+    `<div class="inv-tab ${i===0?'active':''}" data-cat="${c.key}">${c.label}</div>`).join('');
+  document.querySelectorAll('#invTabs .inv-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('#invTabs .inv-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentInvCat = tab.dataset.cat;
+      renderInventory();
+    });
+  });
+
+  document.getElementById('equipSlots').innerHTML = CATEGORY_META.map(c=>
+    `<div class="equip-slot"><div class="slot-lbl">${c.label}</div><div class="slot-val" id="eq-${c.key}">None</div></div>`).join('');
+
+  document.getElementById('storySubTabs').addEventListener('click', (e)=>{
+    const tab = e.target.closest('[data-sub]');
+    if(!tab) return;
+    document.querySelectorAll('#storySubTabs .inv-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    ['main','culling','fightclub'].forEach(k=>{
+      document.getElementById('storySub-'+k).style.display = (k===tab.dataset.sub) ? 'block' : 'none';
+    });
+  });
+
+  document.querySelectorAll('.wager-row [data-wager]').forEach(btn=>{
+    btn.addEventListener('click', ()=> gambleFightClub(parseFloat(btn.dataset.wager)));
+  });
+
+  document.getElementById('cullingChallengeBtn').addEventListener('click', challengeColony);
 }
 
 document.getElementById('trainBtn').addEventListener('click', (e)=>{
@@ -581,106 +781,172 @@ document.getElementById('trainBtn').addEventListener('click', (e)=>{
   renderAll();
 });
 
-document.getElementById('missionBtn').addEventListener('click', async (e)=>{
-  if(missionRemaining() > 0) return;
-  const base = 10 + player.level * 3;
-  const ceGain = Math.round(base * totalMult() * 4);
-  const luckRoll = Math.random();
-  let tickets = 1;
-  if(luckRoll < 0.02) tickets = 3;
-  else if(luckRoll < 0.12) tickets = 2;
-  player.currency += ceGain;
-  player.tickets += tickets;
-  gainExpAndLevel(20 + Math.floor(player.level/3));
-  player.last_mission_at = new Date().toISOString();
-  floatText(e.clientX, e.clientY, `+${ceGain} CE, +${tickets} Ticket${tickets>1?'s':''}`);
-  renderAll();
-  await savePlayer();
-});
-
-function missionRemaining(){
-  if(!player.last_mission_at) return 0;
-  const elapsed = Date.now() - new Date(player.last_mission_at).getTime();
-  return Math.max(0, MISSION_COOLDOWN_MS - elapsed);
-}
-function updateMissionCooldownUI(){
-  if(!player) return;
-  const rem = missionRemaining();
-  const btn = document.getElementById('missionBtn');
-  const note = document.getElementById('missionCooldownNote');
-  if(rem > 0){
-    btn.disabled = true;
-    note.textContent = `Ready in ${Math.ceil(rem/1000)}s`;
-  } else {
-    btn.disabled = false;
-    note.textContent = 'Ready now';
-  }
-}
-
 document.getElementById('rebirthBtn').addEventListener('click', async ()=>{
   if(player.level < REBIRTH_LEVEL) return;
-  if(!confirm('Reincarnate now? Your currency, level and grade will reset, but you keep your inventory, equipped items, and gain a permanent +15% power multiplier.')) return;
-  player.rebirths += 1;
-  player.level = 1;
-  player.exp = 0;
-  player.currency = 0;
-  renderAll();
-  await savePlayer();
+  if(!confirm('Reincarnate now? Your currency, level and grade will reset, but you keep your inventory, equipped items, and gain a permanent ×1.15 power multiplier.')) return;
+  player.rebirths += 1; player.level = 1; player.exp = 0; player.currency = 0;
+  renderAll(); await savePlayer();
   showToast('You have reincarnated. Power multiplier increased.');
 });
 
-/* ---- gacha ---- */
-document.querySelectorAll('.banner-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.banner-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentBanner = btn.dataset.banner;
-    renderRarityTable();
+function activityDuration(def){ return Math.round(def.duration*1000*speedMult()); }
+function activityReward(def){ return Math.round(def.reward*(1+player.level*0.04)*totalMult()*rewardMult()); }
+
+async function startActivity(key){
+  const def = ACTIVITY_DEFS.find(d=>d.key===key);
+  if(gradeIndex() < def.unlockGrade) return;
+  if(player.activities[key] && player.activities[key].startedAt) return;
+  player.activities[key] = { startedAt: new Date().toISOString() };
+  renderActivities();
+  await savePlayer();
+}
+
+function checkActivities(){
+  let changed = false;
+  ACTIVITY_DEFS.forEach(def=>{
+    const st = player.activities[def.key];
+    if(st && st.startedAt){
+      const elapsed = Date.now() - new Date(st.startedAt).getTime();
+      if(elapsed >= activityDuration(def)){
+        const reward = activityReward(def);
+        player.currency += reward;
+        gainExpAndLevel(Math.round(def.reward*0.08));
+        player.activities[def.key] = { startedAt: null };
+        showToast(`${def.name} complete: +${reward.toLocaleString()} CE`);
+        changed = true;
+      }
+    }
   });
-});
+  if(changed){ updateTopBar(); savePlayer(); }
+}
+
+function renderActivities(){
+  const el = document.getElementById('activityList');
+  el.innerHTML = ACTIVITY_DEFS.map(def=>{
+    const locked = gradeIndex() < def.unlockGrade;
+    const st = player.activities[def.key];
+    const running = st && st.startedAt;
+    let inner;
+    if(locked){
+      inner = `<div class="cooldown-note">Unlocks at ${GRADES[def.unlockGrade]}</div>`;
+    } else if(running){
+      const elapsed = Date.now() - new Date(st.startedAt).getTime();
+      const pct = Math.min(100, (elapsed/activityDuration(def))*100);
+      const remain = Math.max(0, Math.ceil((activityDuration(def)-elapsed)/1000));
+      inner = `<div class="xp-bar-wrap"><div class="xp-bar" style="width:${pct}%"></div></div><div class="cooldown-note">${remain}s remaining</div>`;
+    } else {
+      inner = `<button class="btn" data-start-activity="${def.key}">Start (+${activityReward(def).toLocaleString()} CE)</button>`;
+    }
+    return `<div class="seal-frame action-card ${locked?'locked-card':''}">
+      <div class="curse-mark"></div>
+      <h3>${def.name}</h3>
+      <p>${def.duration}s · unlocks at ${GRADES[def.unlockGrade]}</p>
+      ${inner}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-start-activity]').forEach(btn=>{
+    btn.addEventListener('click', ()=> startActivity(btn.dataset.startActivity));
+  });
+}
+
+function missionCooldownMs(def){ return Math.round(def.cooldown*1000*speedMult()); }
+function missionRemaining(def){
+  const st = player.missions[def.key];
+  if(!st || !st.lastAt) return 0;
+  const elapsed = Date.now() - new Date(st.lastAt).getTime();
+  return Math.max(0, missionCooldownMs(def) - elapsed);
+}
+async function embarkMission(key){
+  const def = MISSION_DEFS.find(d=>d.key===key);
+  if(gradeIndex() < def.unlockGrade) return;
+  if(missionRemaining(def) > 0) return;
+  const ceGain = Math.round(def.rewardCE * totalMult() * rewardMult());
+  let tickets = def.rewardTickets[0] + Math.floor(Math.random()*(def.rewardTickets[1]-def.rewardTickets[0]+1));
+  if(Math.random() < ticketBonusChance()) tickets += 1;
+  player.currency += ceGain; player.tickets += tickets;
+  gainExpAndLevel(Math.round(def.rewardCE*0.15));
+  player.missions[key] = { lastAt: new Date().toISOString() };
+  showToast(`${def.name} complete: +${ceGain.toLocaleString()} CE, +${tickets} tickets.`);
+  renderAll(); await savePlayer();
+}
+function renderMissionsTab(){
+  const el = document.getElementById('missionList');
+  el.innerHTML = MISSION_DEFS.map(def=>{
+    const locked = gradeIndex() < def.unlockGrade;
+    const rem = missionRemaining(def);
+    let action;
+    if(locked) action = `<div class="cooldown-note">Unlocks at ${GRADES[def.unlockGrade]}</div>`;
+    else if(rem>0) action = `<div class="cooldown-note">Ready in ${Math.ceil(rem/1000)}s</div>`;
+    else action = `<button class="btn" data-mission="${def.key}">Embark</button>`;
+    return `<div class="seal-frame action-card ${locked?'locked-card':''}">
+      <div class="curse-mark"></div>
+      <h3>${def.name}</h3>
+      <p>${def.desc}</p>
+      ${action}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-mission]').forEach(btn=>{
+    btn.addEventListener('click', ()=> embarkMission(btn.dataset.mission));
+  });
+}
+
+function upgradeCost(key){ return Math.round(50 * Math.pow(1.16, upg(key))); }
+async function buyUpgrade(key){
+  const cost = upgradeCost(key);
+  if(player.currency < cost){ showToast('Not enough Cursed Energy.'); return; }
+  player.currency -= cost;
+  player.upgrades[key] = upg(key) + 1;
+  renderAll(); await savePlayer();
+}
+function renderUpgrades(){
+  const el = document.getElementById('upgradeList');
+  el.innerHTML = UPGRADE_DEFS.map(def=>{
+    const lvl = upg(def.key); const cost = upgradeCost(def.key); const afford = player.currency >= cost;
+    return `<div class="item-row">
+      <div class="item-name-wrap">
+        <span style="font-size:18px;">${def.icon}</span>
+        <div><div style="font-weight:600;">${def.name} <span class="mono" style="color:var(--text-muted); font-size:11px;">Lv.${lvl}</span></div>
+        <div style="font-size:11px; color:var(--text-muted);">${def.desc}</div></div>
+      </div>
+      <button class="btn ${afford?'':'secondary'}" style="width:auto; padding:8px 14px;" data-upgrade="${def.key}" ${afford?'':'disabled'}>${cost.toLocaleString()} CE</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-upgrade]').forEach(btn=>{
+    btn.addEventListener('click', ()=> buyUpgrade(btn.dataset.upgrade));
+  });
+}
 
 function rollRarity(){
   let roll = Math.random() * TOTAL_WEIGHT;
-  for(const r of RARITIES){
-    if(roll < r.weight) return r.key;
-    roll -= r.weight;
-  }
+  for(const r of RARITIES){ if(roll < r.weight) return r.key; roll -= r.weight; }
   return 'common';
 }
-
 async function doRoll(category){
   const rarity = rollRarity();
   const pool = POOLS[category][rarity];
   const name = pool[Math.floor(Math.random()*pool.length)];
   const row = { user_id: session.user.id, category, item_name: name, rarity };
   const { data, error } = await sb.from('player_inventory').insert(row).select().single();
-  if(!error && data) inventory.unshift(data);
-  else inventory.unshift(row);
+  if(!error && data) inventory.unshift(data); else inventory.unshift(row);
   return { name, rarity, category };
 }
-
 document.getElementById('rollOneBtn').addEventListener('click', async ()=>{
   if(player.tickets < 10){ showToast('Not enough Domain Tickets.'); return; }
   player.tickets -= 10;
   const result = await doRoll(currentBanner);
-  renderAll();
-  showReveal(result);
-  await savePlayer();
+  renderAll(); showReveal(result); await savePlayer();
 });
-
 document.getElementById('rollTenBtn').addEventListener('click', async ()=>{
   if(player.tickets < 90){ showToast('Not enough Domain Tickets.'); return; }
   player.tickets -= 90;
   const results = [];
   for(let i=0;i<10;i++) results.push(await doRoll(currentBanner));
   renderAll();
-  // show the best rarity pulled
   const order = RARITIES.map(r=>r.key);
   results.sort((a,b)=>order.indexOf(b.rarity)-order.indexOf(a.rarity));
   showReveal(results[0], `Best of 10 — ${results.length} items bound`);
   await savePlayer();
 });
-
 const revealOverlay = document.getElementById('revealOverlay');
 function showReveal(result, subtitle){
   const r = RARITY_BY_KEY[result.rarity];
@@ -693,69 +959,105 @@ function showReveal(result, subtitle){
 }
 document.getElementById('revealCloseBtn').addEventListener('click', ()=> revealOverlay.style.display = 'none');
 
-/* ---- inventory equip ---- */
-document.querySelectorAll('.inv-tab').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('.inv-tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    currentInvCat = tab.dataset.cat;
-    renderInventory();
-  });
-});
-
 async function equipItem(category, name, rarity){
   player['equipped_'+category] = name;
   player['equipped_'+category+'_rarity'] = rarity;
-  renderAll();
-  await savePlayer();
+  renderAll(); await savePlayer();
   showToast(`Equipped ${name}`);
 }
 
-/* ============================================================
-   RENDER
-   ============================================================ */
-function renderAll(){
-  document.getElementById('ceVal').textContent = Math.floor(player.currency).toLocaleString();
-  document.getElementById('tkVal').textContent = Math.floor(player.tickets).toLocaleString();
-  document.getElementById('gradeLabel').textContent = gradeName() + ' Sorcerer';
-  document.getElementById('gradeVal2').textContent = gradeName();
-  document.getElementById('levelVal').textContent = player.level;
-
-  const pct = Math.min(100, (player.exp/expToNext())*100);
-  document.getElementById('xpBar').style.width = pct + '%';
-  document.getElementById('xpText').textContent = `${Math.floor(player.exp)} / ${expToNext()} EXP`;
-  document.getElementById('multText').textContent = `×${totalMult().toFixed(2)} total power`;
-
-  document.getElementById('rebirthPanel').style.display = player.level >= REBIRTH_LEVEL ? 'block' : 'none';
-
-  updateMissionCooldownUI();
-  renderRarityTable();
-  renderInventory();
-  renderProfile();
+function currentShopWindow(){ return Math.floor(Date.now()/SHOP_REFRESH_MS); }
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
 }
+function getShopItems(){
+  const rng = mulberry32(currentShopWindow());
+  const pool = [...SHOP_POOL];
+  for(let i=pool.length-1;i>0;i--){ const j = Math.floor(rng()*(i+1)); [pool[i],pool[j]] = [pool[j],pool[i]]; }
+  return pool.slice(0,4);
+}
+function ensureShopWindow(){
+  const w = currentShopWindow();
+  if(!player.shop_state || player.shop_state.window !== w){ player.shop_state = { window: w, purchased: [] }; }
+}
+async function buyShopItem(id){
+  ensureShopWindow();
+  if(player.shop_state.purchased.includes(id)){ showToast('Already purchased this rotation.'); return; }
+  const item = SHOP_POOL.find(i=>i.id===id);
+  const balance = item.currency==='tickets' ? player.tickets : player.currency;
+  if(balance < item.cost){ showToast('Not enough ' + (item.currency==='tickets'?'Domain Tickets':'Cursed Energy') + '.'); return; }
+  if(item.currency==='tickets') player.tickets -= item.cost; else player.currency -= item.cost;
 
-function renderRarityTable(){
-  const el = document.getElementById('rarityTable');
-  el.innerHTML = RARITIES.map(r=>{
-    const chance = ((r.weight/TOTAL_WEIGHT)*100).toFixed(r.weight<2?1:0);
-    return `<div class="rarity-row">
-      <span><span class="rarity-dot" style="background:${r.color}"></span>${r.label} <span style="color:var(--text-muted)">(+${Math.round(r.bonus*100)}% power)</span></span>
-      <span class="mono">${chance}%</span>
+  if(item.effectType==='boost'){
+    player.boosts.push({ type:item.boostType, bonus:item.bonus, expiresAt: new Date(Date.now()+item.minutes*60000).toISOString() });
+  } else if(item.effectType==='tickets'){
+    player.tickets += item.amount;
+  } else if(item.effectType==='exp'){
+    gainExpAndLevel(item.amount);
+  } else if(item.effectType==='currency'){
+    player.currency += item.amount;
+  } else if(item.effectType==='item'){
+    const pool = POOLS[item.category][item.rarity];
+    const name = pool[Math.floor(Math.random()*pool.length)];
+    const row = { user_id: session.user.id, category:item.category, item_name:name, rarity:item.rarity };
+    const { data, error } = await sb.from('player_inventory').insert(row).select().single();
+    if(!error && data) inventory.unshift(data); else inventory.unshift(row);
+  }
+  player.shop_state.purchased.push(id);
+  showToast(`Purchased ${item.name}.`);
+  renderAll(); await savePlayer();
+}
+function renderShop(){
+  ensureShopWindow();
+  const items = getShopItems();
+  const el = document.getElementById('shopList');
+  el.innerHTML = items.map(item=>{
+    const purchased = player.shop_state.purchased.includes(item.id);
+    const balance = item.currency==='tickets' ? player.tickets : player.currency;
+    const afford = balance >= item.cost;
+    return `<div class="item-row">
+      <div class="item-name-wrap"><div>
+        <div style="font-weight:600;">${item.name}</div>
+        <div style="font-size:11px; color:var(--text-muted);">${item.desc}</div>
+      </div></div>
+      <button class="btn ${(afford&&!purchased)?'':'secondary'}" style="width:auto; padding:8px 14px;" data-shop="${item.id}" ${purchased?'disabled':''}>
+        ${purchased ? 'Bought' : `${item.cost} ${item.currency==='tickets'?'Tickets':'CE'}`}
+      </button>
     </div>`;
   }).join('');
+  el.querySelectorAll('[data-shop]').forEach(btn=>{
+    btn.addEventListener('click', ()=> buyShopItem(btn.dataset.shop));
+  });
+
+  const boosts = (player.boosts||[]).filter(b=> new Date(b.expiresAt).getTime() > Date.now());
+  document.getElementById('activeBoosts').innerHTML = boosts.length ? boosts.map(b=>{
+    const remain = Math.ceil((new Date(b.expiresAt).getTime()-Date.now())/60000);
+    return `<div class="rarity-row"><span>${b.type==='ce'?'Cursed Energy':'Battle Power'} +${Math.round(b.bonus*100)}%</span><span class="mono">${remain}m left</span></div>`;
+  }).join('') : `<div class="empty-note">No active boosts.</div>`;
+
+  updateShopCountdown();
+}
+function updateShopCountdown(){
+  const el = document.getElementById('shopCountdown');
+  if(!el) return;
+  const nextWindow = (currentShopWindow()+1) * SHOP_REFRESH_MS;
+  const remain = Math.max(0, nextWindow - Date.now());
+  const h = Math.floor(remain/3600000); const m = Math.floor((remain%3600000)/60000);
+  el.textContent = `Restocks in ${h}h ${m}m`;
 }
 
 function renderInventory(){
   const items = inventory.filter(i=>i.category === currentInvCat);
   const list = document.getElementById('invList');
-  if(items.length === 0){
-    list.innerHTML = `<div class="empty-note">No ${currentInvCat}s bound yet. Try the Gacha tab.</div>`;
-    return;
-  }
+  if(items.length === 0){ list.innerHTML = `<div class="empty-note">Nothing bound in this category yet. Try the Gacha tab.</div>`; return; }
   list.innerHTML = items.map(i=>{
     const r = RARITY_BY_KEY[i.rarity];
-    const equippedKey = 'equipped_'+i.category;
-    const isEquipped = player[equippedKey] === i.item_name;
+    const isEquipped = player['equipped_'+i.category] === i.item_name;
     return `<div class="item-row">
       <div class="item-name-wrap">
         <span class="item-rarity-tag" style="background:${r.color}22; color:${r.color}; border:1px solid ${r.color}55;">${r.label}</span>
@@ -766,30 +1068,189 @@ function renderInventory(){
       </button>
     </div>`;
   }).join('');
-
   list.querySelectorAll('[data-equip-name]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      equipItem(btn.dataset.equipCat, decodeURIComponent(btn.dataset.equipName), btn.dataset.equipRarity);
-    });
+    btn.addEventListener('click', ()=> equipItem(btn.dataset.equipCat, decodeURIComponent(btn.dataset.equipName), btn.dataset.equipRarity));
   });
 }
 
-function renderProfile(){
-  document.getElementById('eqTechnique').textContent = player.equipped_technique || 'None';
-  document.getElementById('eqClan').textContent = player.equipped_clan || 'None';
-  document.getElementById('eqTrait').textContent = player.equipped_trait || 'None';
+async function engageStage(stage){
+  if(storyProgress() !== stage.globalIndex) return;
+  if(powerScore() < stage.requiredPower){
+    showToast(`Not strong enough yet. Power ${powerScore().toLocaleString()} / ${stage.requiredPower.toLocaleString()} required.`);
+    return;
+  }
+  player.currency += stage.rewardCE; player.tickets += stage.rewardTickets;
+  gainExpAndLevel(15 + stage.globalIndex * 2);
+  player.story_progress = stage.globalIndex + 1;
+  if(stage.isBoss){
+    const bonus = await bossBonusPull();
+    renderAll(); showReveal(bonus, `Arc Cleared: ${stage.arcName}`);
+  } else {
+    renderAll(); showToast(`Defeated ${stage.name}. +${stage.rewardCE.toLocaleString()} CE, +${stage.rewardTickets} tickets.`);
+  }
+  await savePlayer();
+}
+async function bossBonusPull(){
+  const bossRarities = [{key:'epic',weight:70},{key:'legendary',weight:25},{key:'special_grade',weight:5}];
+  const totalW = bossRarities.reduce((s,r)=>s+r.weight,0);
+  let roll = Math.random()*totalW; let rarity = 'epic';
+  for(const r of bossRarities){ if(roll < r.weight){ rarity = r.key; break; } roll -= r.weight; }
+  const categories = CATEGORY_META.map(c=>c.key);
+  const category = categories[Math.floor(Math.random()*categories.length)];
+  const pool = POOLS[category][rarity];
+  const name = pool[Math.floor(Math.random()*pool.length)];
+  const row = { user_id: session.user.id, category, item_name: name, rarity };
+  const { data, error } = await sb.from('player_inventory').insert(row).select().single();
+  if(!error && data) inventory.unshift(data); else inventory.unshift(row);
+  return { name, rarity, category };
+}
+function renderStory(){
+  const progress = storyProgress();
+  const allCleared = progress >= FLAT_STAGES.length;
+  document.getElementById('arcPanel').style.display = allCleared ? 'none' : 'block';
+  document.getElementById('storyDonePanel').style.display = allCleared ? 'block' : 'none';
+
+  document.getElementById('arcBadges').innerHTML = ARCS_RAW.map((arc, idx)=>{
+    const arcStages = FLAT_STAGES.filter(s=>s.arcIndex===idx);
+    const lastGi = arcStages[arcStages.length-1].globalIndex;
+    const firstGi = arcStages[0].globalIndex;
+    let cls = 'locked';
+    if(progress > lastGi) cls = 'cleared'; else if(progress >= firstGi && progress <= lastGi) cls = 'current';
+    return `<div class="arc-badge ${cls}">${idx+1}. ${arc.name}</div>`;
+  }).join('');
+
+  if(allCleared) return;
+
+  const currentStage = FLAT_STAGES[progress];
+  const arc = ARCS_RAW[currentStage.arcIndex];
+  document.getElementById('arcTitle').textContent = `Arc ${currentStage.arcIndex+1}: ${arc.name}`;
+  document.getElementById('arcSub').textContent = `Stage ${currentStage.stageIndexInArc+1} of ${arc.stages.length} — your power: ${powerScore().toLocaleString()}`;
+
+  const arcStages = FLAT_STAGES.filter(s=>s.arcIndex===currentStage.arcIndex);
+  document.getElementById('stageList').innerHTML = arcStages.map(s=>{
+    let status = 'locked';
+    if(s.globalIndex < progress) status = 'cleared'; else if(s.globalIndex === progress) status = 'current';
+    const canWin = status === 'current' && powerScore() >= s.requiredPower;
+    return `<div class="stage-row ${status} ${s.isBoss?'boss':''}">
+      <div class="stage-info">
+        <div class="stage-name ${s.isBoss?'boss-name':''}">${s.isBoss ? '⚔ BOSS — ' : ''}${s.name}</div>
+        <div class="stage-power">Requires ${s.requiredPower.toLocaleString()} power · rewards ${s.rewardCE.toLocaleString()} CE, ${s.rewardTickets} tickets</div>
+      </div>
+      ${status === 'cleared' ? '<div class="stage-status win">Cleared</div>' : ''}
+      ${status === 'locked' ? '<div class="stage-status">Locked</div>' : ''}
+      ${status === 'current' ? `<button class="btn ${canWin?'':'secondary'}" style="width:auto; padding:8px 14px;" data-engage="${s.globalIndex}">Engage</button>` : ''}
+    </div>`;
+  }).join('');
+  document.querySelectorAll('[data-engage]').forEach(btn=>{
+    btn.addEventListener('click', ()=> engageStage(FLAT_STAGES[parseInt(btn.dataset.engage,10)]));
+  });
+}
+
+async function challengeColony(){
+  const req = colonyRequiredPower(player.colony_rank);
+  if(powerScore() < req){ showToast(`Not strong enough. Power ${powerScore().toLocaleString()} / ${req.toLocaleString()}`); return; }
+  const rewardCE = Math.round(req*0.4);
+  const rewardTickets = 1 + Math.floor(player.colony_rank/5);
+  player.currency += rewardCE; player.tickets += rewardTickets;
+  gainExpAndLevel(10 + player.colony_rank);
+  player.colony_rank += 1;
+  showToast(`Colony Rank ${player.colony_rank}! +${rewardCE.toLocaleString()} CE, +${rewardTickets} tickets.`);
+  renderAll(); await savePlayer();
+}
+function renderCulling(){
+  const req = colonyRequiredPower(player.colony_rank);
+  document.getElementById('cullingRank').textContent = player.colony_rank;
+  document.getElementById('cullingOpponent').textContent = COLONY_OPPONENTS[player.colony_rank % COLONY_OPPONENTS.length];
+  document.getElementById('cullingReq').textContent = `${powerScore().toLocaleString()} / ${req.toLocaleString()} power`;
+  document.getElementById('cullingChallengeBtn').disabled = powerScore() < req;
+}
+
+async function gambleFightClub(pct){
+  const wager = Math.max(10, Math.floor(player.currency*pct));
+  if(wager > player.currency){ showToast('Not enough Cursed Energy to wager.'); return; }
+  const oppPower = fightclubOpponentPower(player.fightclub_streak);
+  const winChance = Math.min(0.9, Math.max(0.1, powerScore()/(powerScore()+oppPower)));
+  const win = Math.random() < winChance;
+  if(win){
+    const payout = Math.round(wager*0.9);
+    player.currency += payout; player.fightclub_streak += 1;
+    showToast(`Idle Death Gamble won! +${payout.toLocaleString()} CE. Streak ${player.fightclub_streak}.`);
+  } else {
+    player.currency -= wager; player.fightclub_streak = 0;
+    showToast(`Idle Death Gamble lost. -${wager.toLocaleString()} CE.`);
+  }
+  renderAll(); await savePlayer();
+}
+function renderFightClub(){
+  const oppPower = fightclubOpponentPower(player.fightclub_streak);
+  const winChance = Math.min(0.9, Math.max(0.1, powerScore()/(powerScore()+oppPower)));
+  document.getElementById('fcStreak').textContent = player.fightclub_streak;
+  document.getElementById('fcWinChance').textContent = Math.round(winChance*100)+'%';
+  document.getElementById('fcOppPower').textContent = oppPower.toLocaleString();
+}
+
+function updateTopBar(){
+  document.getElementById('ceVal').textContent = Math.floor(player.currency).toLocaleString();
+  document.getElementById('tkVal').textContent = Math.floor(player.tickets).toLocaleString();
+  document.getElementById('gradeLabel').textContent = gradeName() + ' Sorcerer';
+  document.getElementById('gradeVal2').textContent = gradeName();
+  document.getElementById('levelVal').textContent = player.level;
+  const pct = Math.min(100, (player.exp/expToNext())*100);
+  document.getElementById('xpBar').style.width = pct + '%';
+  document.getElementById('xpText').textContent = `${Math.floor(player.exp)} / ${expToNext()} EXP`;
+  document.getElementById('multText').textContent = `×${totalMult().toFixed(2)} CE mult · ${powerScore().toLocaleString()} power`;
+  document.getElementById('rebirthPanel').style.display = player.level >= REBIRTH_LEVEL ? 'block' : 'none';
+}
+
+function renderRarityTable(){
+  document.getElementById('rarityTable').innerHTML = RARITIES.map(r=>{
+    const chance = ((r.weight/TOTAL_WEIGHT)*100).toFixed(r.weight<2?1:0);
+    return `<div class="rarity-row">
+      <span><span class="rarity-dot" style="background:${r.color}"></span>${r.label} <span style="color:var(--text-muted)">(+${Math.round(r.bonus*100)}% power)</span></span>
+      <span class="mono">${chance}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderStats(){
+  CATEGORY_META.forEach(c=>{
+    const elm = document.getElementById('eq-'+c.key);
+    if(elm) elm.textContent = player['equipped_'+c.key] || 'None';
+  });
   document.getElementById('statGrade').textContent = gradeName();
   document.getElementById('statLevel').textContent = player.level;
   document.getElementById('statRebirths').textContent = player.rebirths;
+  document.getElementById('statStory').textContent = `${Math.min(storyProgress(),FLAT_STAGES.length)} / ${FLAT_STAGES.length} stages`;
   document.getElementById('statMult').textContent = '×' + totalMult().toFixed(2);
-  document.getElementById('statTechCount').textContent = inventory.filter(i=>i.category==='technique').length;
-  document.getElementById('statClanCount').textContent = inventory.filter(i=>i.category==='clan').length;
-  document.getElementById('statTraitCount').textContent = inventory.filter(i=>i.category==='trait').length;
+  document.getElementById('statPower').textContent = powerScore().toLocaleString();
+  document.getElementById('invCountStats').innerHTML = CATEGORY_META.map(c=>{
+    const count = inventory.filter(i=>i.category===c.key).length;
+    return `<div class="stat-line"><span>${c.label} bound</span><span class="mono">${count}</span></div>`;
+  }).join('');
+  renderUpgrades();
 }
 
-/* ============================================================
-   TABS
-   ============================================================ */
+function renderAll(){
+  updateTopBar();
+  renderActivities();
+  renderMissionsTab();
+  renderStory();
+  renderCulling();
+  renderFightClub();
+  renderRarityTable();
+  renderInventory();
+  renderShop();
+  renderStats();
+}
+
+function tickLoop(){
+  if(!player) return;
+  checkActivities();
+  renderActivities();
+  renderMissionsTab();
+  updateShopCountdown();
+}
+
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -799,29 +1260,20 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   });
 });
 
-/* ============================================================
-   MISC UI HELPERS
-   ============================================================ */
 function floatText(x,y,text){
   const el = document.createElement('div');
-  el.className = 'float-gain';
-  el.textContent = text;
-  el.style.left = (x-20)+'px';
-  el.style.top = (y-20)+'px';
+  el.className = 'float-gain'; el.textContent = text;
+  el.style.left = (x-20)+'px'; el.style.top = (y-20)+'px';
   document.body.appendChild(el);
   setTimeout(()=>el.remove(), 1000);
 }
-
 let toastTimer;
 function showToast(msg){
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
 }
-
-// save on tab close
 window.addEventListener('beforeunload', ()=>{ if(player) savePlayer(); });
 </script>
 </body>
