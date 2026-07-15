@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sorcerer Protocol</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="auth-shell">
+  <div class="auth-visual">
+    <svg class="glyph-ring" viewBox="0 0 640 640" fill="none">
+      <circle cx="320" cy="320" r="260" stroke="#7c5cff" stroke-opacity="0.18" stroke-width="1.5"/>
+      <circle cx="320" cy="320" r="200" stroke="#7c5cff" stroke-opacity="0.12" stroke-width="1"/>
+      <circle cx="320" cy="320" r="200" stroke="#e5484d" stroke-opacity="0.08" stroke-width="1" stroke-dasharray="4 10"/>
+      <path d="M320 60 L340 300 L320 580 L300 300 Z" stroke="#a78bfa" stroke-opacity="0.15" stroke-width="1"/>
+      <path d="M60 320 L300 340 L580 320 L300 300 Z" stroke="#a78bfa" stroke-opacity="0.15" stroke-width="1"/>
+    </svg>
+    <div class="eyebrow">SORCERER PROTOCOL — TEXT-BASED INCREMENTAL</div>
+    <h1 class="auth-title">Bind your <span>curse</span>.<br/>Survive the grade.</h1>
+    <p class="auth-sub">Roll for a cursed technique, a clan, and a trait. Train until your body catches up to your energy. Fight what's waiting in the dark, and don't stop until you've found what's at the bottom of it.</p>
+    <div class="auth-tenets">
+      <div class="tenet"><b>01 RNG</b> Techniques, clans, and traits across six rarities.</div>
+      <div class="tenet"><b>02 ARCS</b> Push through story battles toward the King of Curses.</div>
+      <div class="tenet"><b>03 GRIND</b> Train, work, rebirth, and reincarnate for permanent power.</div>
+    </div>
+  </div>
+
+  <div class="auth-form-wrap">
+    <div class="auth-card panel" style="padding:36px; border: 1px solid var(--border-soft);">
+      <div class="eyebrow" id="formEyebrow">SIGN IN</div>
+      <h2 id="formTitle">Welcome back, sorcerer</h2>
+
+      <div class="field" id="usernameField" style="display:none;">
+        <label>Sorcerer name</label>
+        <input type="text" id="usernameInput" placeholder="e.g. Frostbound" maxlength="20" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="emailInput" placeholder="you@example.com" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="passwordInput" placeholder="••••••••" />
+      </div>
+
+      <div class="auth-actions">
+        <button class="btn btn-primary" id="submitBtn">Sign In</button>
+      </div>
+
+      <div class="auth-error" id="authError"></div>
+
+      <div class="auth-toggle">
+        <span id="toggleText">Don't have an account?</span>
+        <button id="toggleBtn">Create one</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

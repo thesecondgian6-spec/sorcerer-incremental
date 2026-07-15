@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sorcerer Protocol — Dashboard</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="game-shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="brand">Sorcerer<span>Protocol</span></div>
+
+    <div class="nav-section-label">Grind</div>
+    <div class="nav-item active" data-page="train"><span class="dot"></span>Train</div>
+    <div class="nav-item" data-page="work"><span class="dot"></span>Work</div>
+    <div class="nav-item" data-page="missions"><span class="dot"></span>Missions</div>
+
+    <div class="nav-section-label">Power</div>
+    <div class="nav-item" data-page="gacha"><span class="dot"></span>Cursed Roll</div>
+    <div class="nav-item" data-page="inventory"><span class="dot"></span>Inventory</div>
+
+    <div class="nav-section-label">World</div>
+    <div class="nav-item" data-page="story"><span class="dot"></span>Story Arcs</div>
+    <div class="nav-item" data-page="tournament"><span class="dot"></span>Culling Games</div>
+    <div class="nav-item" data-page="shop"><span class="dot"></span>Shop</div>
+    <div class="nav-item" data-page="rebirth"><span class="dot"></span>Rebirth</div>
+
+    <div class="sidebar-footer">
+      <button class="btn" id="signOutBtn" style="width:100%; font-size:12px; padding:9px;">Sign out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TRAIN -->
+    <div class="page" id="page-train">
+      <div class="page-head">
+        <h1>Train</h1>
+        <p>Push your body and cursed energy past what's comfortable. Builds exp and cursed energy.</p>
+      </div>
+      <div class="action-grid">
+        <div class="panel action-card">
+          <h3>Solo Training</h3>
+          <p>Basic drills — form, control, endurance. Low risk, steady gain.</p>
+          <div class="reward-line" id="trainReward">+8–18 Cursed Energy · +5–12 EXP</div>
+          <button class="btn btn-primary" id="trainBtn">Train</button>
+          <div class="cooldown" id="trainCooldown"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORK -->
+    <div class="page" id="page-work" style="display:none;">
+      <div class="page-head">
+        <h1>Work</h1>
+        <p>Take on odd jobs around sorcerer society. Steady coin, no cursed energy.</p>
+      </div>
+      <div class="action-grid">
+        <div class="panel action-card">
+          <h3>Exorcism Contract</h3>
+          <p>Low-grade extermination requests filed through the local office.</p>
+          <div class="reward-line" id="workReward">+15–35 Coins</div>
+          <button class="btn btn-primary" id="workBtn">Work</button>
+          <div class="cooldown" id="workCooldown"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISSIONS (stub) -->
+    <div class="page" id="page-missions" style="display:none;">
+      <div class="page-head"><h1>Missions</h1><p>Structured objectives with bigger payouts.</p></div>
+      <div class="panel coming-soon">
+        <div class="eyebrow">NEXT UP</div>
+        <h2>Mission board is being drafted</h2>
+      </div>
+    </div>
+
+    <!-- GACHA -->
+    <div class="page" id="page-gacha" style="display:none;">
+      <div class="page-head">
+        <h1>Cursed Roll</h1>
+        <p>Roll for cursed techniques, clans, and unique cursed energy traits.</p>
+      </div>
+
+      <div class="panel gacha-hero">
+        <h2>The binding vow awaits</h2>
+        <p>Each roll draws from every pool at once — technique, clan, and trait — weighted by rarity.</p>
+        <div class="gacha-actions">
+          <button class="btn btn-primary" id="rollOneBtn">Roll ×1 — 100 Shards</button>
+          <button class="btn btn-primary" id="rollTenBtn">Roll ×10 — 900 Shards</button>
+        </div>
+        <div class="pity-track">
+          <div class="stat-row"><span class="k">Shards</span><span class="v" id="shardCount">0</span></div>
+          <div class="stat-row"><span class="k">Pity (Special Grade+)</span><span class="v" id="pityCount">0 / 90</span></div>
+        </div>
+      </div>
+
+      <div class="result-grid" id="gachaResults"></div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="page" id="page-inventory" style="display:none;">
+      <div class="page-head">
+        <h1>Inventory</h1>
+        <p>Your bound techniques, clan lineage, and cursed energy traits.</p>
+      </div>
+      <div id="inventoryContent"></div>
+    </div>
+
+    <!-- STORY (stub) -->
+    <div class="page" id="page-story" style="display:none;">
+      <div class="page-head"><h1>Story Arcs</h1><p>Battle curse spirits and curse users, arc by arc, toward the King of Curses.</p></div>
+      <div class="panel coming-soon">
+        <div class="eyebrow">NEXT UP</div>
+        <h2>First story arc is in development</h2>
+      </div>
+    </div>
+
+    <!-- TOURNAMENT (stub) -->
+    <div class="page" id="page-tournament" style="display:none;">
+      <div class="page-head"><h1>Culling Games</h1><p>Compete against other sorcerers for rank and rare rewards.</p></div>
+      <div class="panel coming-soon">
+        <div class="eyebrow">NEXT UP</div>
+        <h2>Tournament mode is in development</h2>
+      </div>
+    </div>
+
+    <!-- SHOP (stub) -->
+    <div class="page" id="page-shop" style="display:none;">
+      <div class="page-head"><h1>Shop</h1><p>Spend coins and shards on weapons, items, and upgrades.</p></div>
+      <div class="panel coming-soon">
+        <div class="eyebrow">NEXT UP</div>
+        <h2>Shop inventory is in development</h2>
+      </div>
+    </div>
+
+    <!-- REBIRTH (stub) -->
+    <div class="page" id="page-rebirth" style="display:none;">
+      <div class="page-head"><h1>Rebirth</h1><p>Reset your grade for a permanent multiplier and access to higher tiers.</p></div>
+      <div class="panel coming-soon">
+        <div class="eyebrow">NEXT UP</div>
+        <h2>Rebirth system is in development</h2>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STAT RAIL -->
+  <div class="stat-rail">
+    <div class="grade-badge" id="gradeBadge">Grade 4</div>
+    <div style="text-align:center; font-size:13px; color: var(--text-muted); margin-bottom:4px;" id="usernameDisplay">—</div>
+    <div style="text-align:center; font-family: var(--font-mono); font-size:11px; color: var(--text-dim);">Level <span id="levelDisplay">1</span></div>
+    <div class="exp-bar-track"><div class="exp-bar-fill" id="expBarFill" style="width:0%"></div></div>
+    <div style="text-align:center; font-size:10px; color: var(--text-dim); margin-top:4px; font-family: var(--font-mono);" id="expText">0 / 100</div>
+
+    <div class="energy-gauge">
+      <svg viewBox="0 0 168 168" width="168" height="168">
+        <defs>
+          <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7c5cff"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+        </defs>
+        <circle class="track" cx="84" cy="84" r="74"/>
+        <circle class="fill" id="gaugeFill" cx="84" cy="84" r="74" stroke-dasharray="465" stroke-dashoffset="465"/>
+      </svg>
+      <div class="center">
+        <div class="val" id="ceDisplay">0</div>
+        <div class="lbl">Cursed Energy</div>
+      </div>
+    </div>
+
+    <div class="stat-row"><span class="k">Coins</span><span class="v" id="coinsDisplay">0</span></div>
+    <div class="stat-row"><span class="k">Shards</span><span class="v" id="shardsSideDisplay">0</span></div>
+    <div class="stat-row"><span class="k">Rebirths</span><span class="v" id="rebirthsDisplay">0</span></div>
+    <div class="stat-row"><span class="k">Reincarnations</span><span class="v" id="reincarnationsDisplay">0</span></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/gameData.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
