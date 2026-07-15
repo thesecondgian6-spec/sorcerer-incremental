@@ -4,13 +4,23 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sorcerer Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css" />
+<style>
+  /* Critical fallback — ensures dark bg even before stylesheet fully parses */
+  html, body { background: #0a0812 !important; color: #e8e5f2; }
+</style>
 </head>
 <body>
 
+<!-- MOBILE: just show the form, full screen -->
 <div class="auth-shell">
+
+  <!-- Left panel: hidden on mobile via CSS -->
   <div class="auth-visual">
-    <svg class="glyph-ring" viewBox="0 0 640 640" fill="none">
+    <svg class="glyph-ring" viewBox="0 0 640 640" fill="none" aria-hidden="true">
       <circle cx="320" cy="320" r="260" stroke="#7c5cff" stroke-opacity="0.18" stroke-width="1.5"/>
       <circle cx="320" cy="320" r="200" stroke="#7c5cff" stroke-opacity="0.12" stroke-width="1"/>
       <circle cx="320" cy="320" r="200" stroke="#e5484d" stroke-opacity="0.08" stroke-width="1" stroke-dasharray="4 10"/>
@@ -19,7 +29,7 @@
     </svg>
     <div class="eyebrow">SORCERER PROTOCOL — TEXT-BASED INCREMENTAL</div>
     <h1 class="auth-title">Bind your <span>curse</span>.<br/>Survive the grade.</h1>
-    <p class="auth-sub">Roll for a cursed technique, a clan, and a trait. Train until your body catches up to your energy. Fight what's waiting in the dark, and don't stop until you've found what's at the bottom of it.</p>
+    <p class="auth-sub">Roll for a cursed technique, a clan, and a trait. Train until your body catches up to your energy. Fight what's waiting in the dark.</p>
     <div class="auth-tenets">
       <div class="tenet"><b>01 RNG</b> Techniques, clans, and traits across six rarities.</div>
       <div class="tenet"><b>02 ARCS</b> Push through story battles toward the King of Curses.</div>
@@ -27,22 +37,32 @@
     </div>
   </div>
 
+  <!-- Right panel / full screen on mobile -->
   <div class="auth-form-wrap">
-    <div class="auth-card panel" style="padding:36px; border: 1px solid var(--border-soft);">
-      <div class="eyebrow" id="formEyebrow">SIGN IN</div>
+
+    <!-- Mobile-only header -->
+    <div class="auth-mobile-header">
+      <div style="font-family:'Shippori Mincho',serif; font-weight:800; font-size:22px; letter-spacing:-0.01em;">
+        Sorcerer<span style="color:#a78bfa;">Protocol</span>
+      </div>
+      <div style="font-size:12px; color:#8f8aa8; margin-top:4px; font-family:'JetBrains Mono',monospace; letter-spacing:0.06em;">TEXT-BASED INCREMENTAL</div>
+    </div>
+
+    <div class="auth-card">
+      <div class="eyebrow" id="formEyebrow" style="margin-bottom:8px;">SIGN IN</div>
       <h2 id="formTitle">Welcome back, sorcerer</h2>
 
       <div class="field" id="usernameField" style="display:none;">
         <label>Sorcerer name</label>
-        <input type="text" id="usernameInput" placeholder="e.g. Frostbound" maxlength="20" />
+        <input type="text" id="usernameInput" placeholder="e.g. Frostbound" maxlength="20" autocomplete="off" />
       </div>
       <div class="field">
         <label>Email</label>
-        <input type="email" id="emailInput" placeholder="you@example.com" />
+        <input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email" />
       </div>
       <div class="field">
         <label>Password</label>
-        <input type="password" id="passwordInput" placeholder="••••••••" />
+        <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password" />
       </div>
 
       <div class="auth-actions">
