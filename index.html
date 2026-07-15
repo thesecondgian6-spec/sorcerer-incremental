@@ -3,84 +3,826 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sorcerer Protocol</title>
+<title>Cursed Ascendant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-  /* Critical fallback — ensures dark bg even before stylesheet fully parses */
-  html, body { background: #0a0812 !important; color: #e8e5f2; }
+  :root{
+    --void:#0a0a10;
+    --surface:#121220;
+    --surface-2:#191930;
+    --border:#2a2a45;
+    --purple:#7b2ff7;
+    --purple-dim:#4d1f99;
+    --blood:#e0293f;
+    --text:#eae8f5;
+    --text-muted:#8d8aa8;
+    --common:#9CA3AF;
+    --rare:#4c9eff;
+    --epic:#b24cff;
+    --legendary:#ffb84c;
+    --special:#ff4c5e;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 10%, rgba(123,47,247,0.10), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(224,41,63,0.08), transparent 45%),
+      var(--void);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background-attachment:fixed;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  h1,h2,h3,.display{font-family:'Cinzel',serif; letter-spacing:0.03em;}
+
+  /* ---------- layout shells ---------- */
+  #authScreen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  #gameScreen{display:none; max-width:920px; margin:0 auto; padding:16px 16px 60px;}
+
+  .curse-mark{
+    position:absolute; inset:0; pointer-events:none; opacity:0.35;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image: radial-gradient(circle at center, black, transparent 75%);
+  }
+
+  /* seal-corner card frame */
+  .seal-frame{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
+  }
+
+  /* ---------- auth ---------- */
+  .auth-card{
+    width:100%; max-width:400px; padding:36px 30px;
+  }
+  .auth-title{font-size:28px; margin:0 0 4px; text-align:center; color:var(--text);}
+  .auth-sub{text-align:center; color:var(--text-muted); font-size:13px; margin:0 0 26px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;}
+  .field input{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    padding:11px 12px; border-radius:4px; font-size:14px; font-family:'Inter',sans-serif;
+  }
+  .field input:focus{outline:none; border-color:var(--purple);}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:linear-gradient(180deg, var(--purple), var(--purple-dim));
+    color:#fff; border:none; padding:12px 18px; border-radius:4px; font-weight:600; font-size:14px;
+    cursor:pointer; width:100%; font-family:'Inter',sans-serif;
+    box-shadow:0 0 0 1px rgba(123,47,247,0.4), 0 6px 20px -6px rgba(123,47,247,0.6);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 0 0 1px rgba(123,47,247,0.6), 0 10px 26px -8px rgba(123,47,247,0.8);}
+  .btn:active{transform:translateY(0);}
+  .btn.secondary{background:transparent; border:1px solid var(--border); box-shadow:none;}
+  .btn.blood{background:linear-gradient(180deg, var(--blood), #7a1420); box-shadow:0 0 0 1px rgba(224,41,63,0.4);}
+  .btn:disabled{opacity:0.4; cursor:not-allowed; transform:none;}
+  .auth-toggle{text-align:center; margin-top:16px; font-size:13px; color:var(--text-muted);}
+  .auth-toggle a{color:var(--purple); cursor:pointer; text-decoration:none; font-weight:600;}
+  .auth-error{color:var(--special); font-size:13px; margin-top:10px; text-align:center; min-height:16px;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 18px; margin-bottom:14px; position:relative; overflow:hidden;
+  }
+  .topbar .title{font-size:18px; margin:0; color:var(--text);}
+  .topbar .grade{font-size:11px; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em;}
+  .resources{display:flex; gap:16px; flex-wrap:wrap;}
+  .resource{display:flex; flex-direction:column; align-items:flex-end;}
+  .resource .val{font-size:16px; font-weight:700;}
+  .resource .lbl{font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em;}
+  .ce .val{color:var(--purple);}
+  .tk .val{color:var(--legendary);}
+  .logout{background:none; border:1px solid var(--border); color:var(--text-muted); padding:6px 10px; border-radius:4px; font-size:12px; cursor:pointer;}
+  .logout:hover{color:var(--text); border-color:var(--special);}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex; gap:6px; margin-bottom:16px; overflow-x:auto;}
+  .tab-btn{
+    flex:1; text-align:center; padding:10px 8px; background:var(--surface); border:1px solid var(--border);
+    color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .tab-btn.active{color:#fff; border-color:var(--purple); background:linear-gradient(180deg, rgba(123,47,247,0.25), rgba(123,47,247,0.05));}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* ---------- panels ---------- */
+  .panel{padding:20px; margin-bottom:14px; position:relative;}
+  .panel h2{font-size:15px; margin:0 0 4px; color:var(--text);}
+  .panel .sub{font-size:12px; color:var(--text-muted); margin:0 0 18px;}
+
+  .xp-bar-wrap{background:var(--surface-2); border-radius:6px; height:10px; overflow:hidden; margin:8px 0 4px; border:1px solid var(--border);}
+  .xp-bar{height:100%; background:linear-gradient(90deg, var(--purple-dim), var(--purple));}
+  .xp-label{font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between;}
+
+  .train-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
+  @media (max-width:520px){.train-grid{grid-template-columns:1fr;}}
+  .action-card{padding:18px; text-align:center;}
+  .action-card .big-icon{font-size:30px; margin-bottom:6px;}
+  .action-card h3{margin:0 0 4px; font-size:14px;}
+  .action-card p{margin:0 0 14px; font-size:12px; color:var(--text-muted);}
+  .cooldown-note{font-size:11px; color:var(--text-muted); margin-top:8px;}
+
+  .float-gain{
+    position:fixed; pointer-events:none; font-family:'JetBrains Mono',monospace; font-weight:700;
+    color:var(--purple); font-size:14px; z-index:999; animation:floatUp 1s ease-out forwards;
+  }
+  @keyframes floatUp{ to{ transform:translateY(-40px); opacity:0; } }
+
+  /* ---------- gacha ---------- */
+  .banner-select{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .banner-btn{
+    flex:1; min-width:100px; padding:10px; text-align:center; background:var(--surface-2); border:1px solid var(--border);
+    color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; border-radius:4px;
+  }
+  .banner-btn.active{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.18);}
+  .roll-cost{font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:14px;}
+  .roll-buttons{display:flex; gap:10px;}
+  .rarity-table{margin-top:18px; font-size:12px;}
+  .rarity-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);}
+  .rarity-dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:8px;}
+
+  .reveal-overlay{
+    position:fixed; inset:0; background:rgba(6,6,12,0.88); display:none; align-items:center; justify-content:center;
+    z-index:1000; backdrop-filter:blur(3px);
+  }
+  .reveal-card{
+    width:280px; padding:34px 22px; text-align:center; background:var(--surface); border:1px solid var(--border);
+    clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+    animation:revealPop .4s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes revealPop{ from{transform:scale(.7); opacity:0;} to{transform:scale(1); opacity:1;} }
+  .reveal-rarity{font-size:11px; text-transform:uppercase; letter-spacing:0.14em; margin-bottom:10px; font-weight:700;}
+  .reveal-name{font-family:'Cinzel',serif; font-size:20px; margin:0 0 8px;}
+  .reveal-cat{font-size:12px; color:var(--text-muted); margin-bottom:18px; text-transform:capitalize;}
+
+  /* ---------- inventory ---------- */
+  .inv-tabs{display:flex; gap:8px; margin-bottom:14px;}
+  .inv-tab{padding:6px 12px; font-size:12px; border:1px solid var(--border); border-radius:4px; color:var(--text-muted); cursor:pointer;}
+  .inv-tab.active{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.18);}
+  .item-list{display:flex; flex-direction:column; gap:8px;}
+  .item-row{
+    display:flex; align-items:center; justify-content:space-between; padding:10px 14px;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:5px; font-size:13px;
+  }
+  .item-name-wrap{display:flex; align-items:center; gap:10px;}
+  .item-rarity-tag{font-size:10px; text-transform:uppercase; font-weight:700; padding:2px 7px; border-radius:3px;}
+  .empty-note{color:var(--text-muted); font-size:13px; text-align:center; padding:30px 0;}
+
+  /* ---------- profile ---------- */
+  .equip-slots{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:10px;}
+  @media (max-width:520px){.equip-slots{grid-template-columns:1fr;}}
+  .equip-slot{padding:14px; text-align:center; background:var(--surface-2); border:1px solid var(--border); border-radius:6px;}
+  .equip-slot .slot-lbl{font-size:10px; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.06em;}
+  .equip-slot .slot-val{font-size:13px; font-weight:600;}
+  .stat-line{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px;}
+  .stat-line:last-child{border-bottom:none;}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border);
+    padding:10px 18px; border-radius:6px; font-size:13px; z-index:1100; opacity:0; transition:opacity .3s;
+  }
+  .toast.show{opacity:1;}
 </style>
 </head>
 <body>
 
-<!-- MOBILE: just show the form, full screen -->
-<div class="auth-shell">
+<!-- ================= AUTH SCREEN ================= -->
+<div id="authScreen">
+  <div class="seal-frame auth-card">
+    <div class="curse-mark"></div>
+    <h1 class="auth-title">Cursed Ascendant</h1>
+    <p class="auth-sub">Train. Bind curses. Ascend the grades.</p>
 
-  <!-- Left panel: hidden on mobile via CSS -->
-  <div class="auth-visual">
-    <svg class="glyph-ring" viewBox="0 0 640 640" fill="none" aria-hidden="true">
-      <circle cx="320" cy="320" r="260" stroke="#7c5cff" stroke-opacity="0.18" stroke-width="1.5"/>
-      <circle cx="320" cy="320" r="200" stroke="#7c5cff" stroke-opacity="0.12" stroke-width="1"/>
-      <circle cx="320" cy="320" r="200" stroke="#e5484d" stroke-opacity="0.08" stroke-width="1" stroke-dasharray="4 10"/>
-      <path d="M320 60 L340 300 L320 580 L300 300 Z" stroke="#a78bfa" stroke-opacity="0.15" stroke-width="1"/>
-      <path d="M60 320 L300 340 L580 320 L300 300 Z" stroke="#a78bfa" stroke-opacity="0.15" stroke-width="1"/>
-    </svg>
-    <div class="eyebrow">SORCERER PROTOCOL — TEXT-BASED INCREMENTAL</div>
-    <h1 class="auth-title">Bind your <span>curse</span>.<br/>Survive the grade.</h1>
-    <p class="auth-sub">Roll for a cursed technique, a clan, and a trait. Train until your body catches up to your energy. Fight what's waiting in the dark.</p>
-    <div class="auth-tenets">
-      <div class="tenet"><b>01 RNG</b> Techniques, clans, and traits across six rarities.</div>
-      <div class="tenet"><b>02 ARCS</b> Push through story battles toward the King of Curses.</div>
-      <div class="tenet"><b>03 GRIND</b> Train, work, rebirth, and reincarnate for permanent power.</div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="authEmail" autocomplete="email" placeholder="you@example.com" />
     </div>
-  </div>
-
-  <!-- Right panel / full screen on mobile -->
-  <div class="auth-form-wrap">
-
-    <!-- Mobile-only header -->
-    <div class="auth-mobile-header">
-      <div style="font-family:'Shippori Mincho',serif; font-weight:800; font-size:22px; letter-spacing:-0.01em;">
-        Sorcerer<span style="color:#a78bfa;">Protocol</span>
-      </div>
-      <div style="font-size:12px; color:#8f8aa8; margin-top:4px; font-family:'JetBrains Mono',monospace; letter-spacing:0.06em;">TEXT-BASED INCREMENTAL</div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="authPassword" autocomplete="current-password" placeholder="••••••••" />
     </div>
 
-    <div class="auth-card">
-      <div class="eyebrow" id="formEyebrow" style="margin-bottom:8px;">SIGN IN</div>
-      <h2 id="formTitle">Welcome back, sorcerer</h2>
-
-      <div class="field" id="usernameField" style="display:none;">
-        <label>Sorcerer name</label>
-        <input type="text" id="usernameInput" placeholder="e.g. Frostbound" maxlength="20" autocomplete="off" />
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="emailInput" placeholder="you@example.com" autocomplete="email" />
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password" />
-      </div>
-
-      <div class="auth-actions">
-        <button class="btn btn-primary" id="submitBtn">Sign In</button>
-      </div>
-
-      <div class="auth-error" id="authError"></div>
-
-      <div class="auth-toggle">
-        <span id="toggleText">Don't have an account?</span>
-        <button id="toggleBtn">Create one</button>
-      </div>
+    <button class="btn" id="authSubmitBtn">Enter the Curtain</button>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-toggle">
+      <span id="authToggleText">New sorcerer?</span> <a id="authToggleLink">Create an account</a>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabaseClient.js"></script>
-<script src="js/auth.js"></script>
+<!-- ================= GAME SCREEN ================= -->
+<div id="gameScreen">
+
+  <div class="seal-frame topbar">
+    <div class="curse-mark"></div>
+    <div>
+      <h1 class="title display">Cursed Ascendant</h1>
+      <div class="grade mono" id="gradeLabel">Grade 4 Sorcerer</div>
+    </div>
+    <div class="resources">
+      <div class="resource ce"><div class="val mono" id="ceVal">0</div><div class="lbl">Cursed Energy</div></div>
+      <div class="resource tk"><div class="val mono" id="tkVal">0</div><div class="lbl">Domain Tickets</div></div>
+      <button class="logout" id="logoutBtn">Sign out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab-btn active" data-tab="train">Train</div>
+    <div class="tab-btn" data-tab="gacha">Gacha</div>
+    <div class="tab-btn" data-tab="inventory">Inventory</div>
+    <div class="tab-btn" data-tab="profile">Profile</div>
+  </div>
+
+  <!-- TRAIN TAB -->
+  <div class="tab-panel active" id="tab-train">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Level <span id="levelVal">1</span> — <span id="gradeVal2">Grade 4</span></h2>
+      <p class="sub">Grow your cursed energy output through training and fieldwork.</p>
+      <div class="xp-bar-wrap"><div class="xp-bar" id="xpBar" style="width:0%"></div></div>
+      <div class="xp-label"><span id="xpText">0 / 50 EXP</span><span id="multText">×1.00 total power</span></div>
+
+      <div class="train-grid">
+        <div class="seal-frame action-card">
+          <div class="curse-mark"></div>
+          <div class="big-icon">⚔️</div>
+          <h3>Train</h3>
+          <p>Hone your technique. Instant, no cooldown.</p>
+          <button class="btn" id="trainBtn">Train</button>
+        </div>
+        <div class="seal-frame action-card">
+          <div class="curse-mark"></div>
+          <div class="big-icon">🩸</div>
+          <h3>Curse Mission</h3>
+          <p>Exorcise a curse for tickets + bonus energy.</p>
+          <button class="btn blood" id="missionBtn">Embark</button>
+          <div class="cooldown-note" id="missionCooldownNote"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seal-frame panel" id="rebirthPanel" style="display:none;">
+      <div class="curse-mark"></div>
+      <h2>Reincarnation</h2>
+      <p class="sub">You have reached the ceiling of your current bloodline. Reincarnate to reset your grade in exchange for a permanent power multiplier. Your inventory and equipped items are kept.</p>
+      <button class="btn blood" id="rebirthBtn">Reincarnate (+15% permanent power)</button>
+    </div>
+  </div>
+
+  <!-- GACHA TAB -->
+  <div class="tab-panel" id="tab-gacha">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Binding Ritual</h2>
+      <p class="sub">Spend Domain Tickets to bind a cursed technique, awaken a clan bloodline, or manifest a unique cursed energy trait.</p>
+
+      <div class="banner-select">
+        <div class="banner-btn active" data-banner="technique">Cursed Techniques</div>
+        <div class="banner-btn" data-banner="clan">Clans</div>
+        <div class="banner-btn" data-banner="trait">CE Traits</div>
+      </div>
+
+      <div class="roll-cost">10 tickets per roll · 90 tickets for 10</div>
+      <div class="roll-buttons">
+        <button class="btn" id="rollOneBtn">Roll ×1</button>
+        <button class="btn secondary" id="rollTenBtn">Roll ×10</button>
+      </div>
+
+      <div class="rarity-table" id="rarityTable"></div>
+    </div>
+  </div>
+
+  <!-- INVENTORY TAB -->
+  <div class="tab-panel" id="tab-inventory">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Inventory</h2>
+      <p class="sub">Everything you've bound. Equip one of each category to gain its passive bonus.</p>
+      <div class="inv-tabs">
+        <div class="inv-tab active" data-cat="technique">Techniques</div>
+        <div class="inv-tab" data-cat="clan">Clans</div>
+        <div class="inv-tab" data-cat="trait">Traits</div>
+      </div>
+      <div class="item-list" id="invList"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE TAB -->
+  <div class="tab-panel" id="tab-profile">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Sorcerer Profile</h2>
+      <div class="equip-slots">
+        <div class="equip-slot"><div class="slot-lbl">Technique</div><div class="slot-val" id="eqTechnique">None</div></div>
+        <div class="equip-slot"><div class="slot-lbl">Clan</div><div class="slot-val" id="eqClan">None</div></div>
+        <div class="equip-slot"><div class="slot-lbl">CE Trait</div><div class="slot-val" id="eqTrait">None</div></div>
+      </div>
+    </div>
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Stats</h2>
+      <div class="stat-line"><span>Grade</span><span class="mono" id="statGrade">Grade 4</span></div>
+      <div class="stat-line"><span>Level</span><span class="mono" id="statLevel">1</span></div>
+      <div class="stat-line"><span>Reincarnations</span><span class="mono" id="statRebirths">0</span></div>
+      <div class="stat-line"><span>Total power multiplier</span><span class="mono" id="statMult">×1.00</span></div>
+      <div class="stat-line"><span>Techniques bound</span><span class="mono" id="statTechCount">0</span></div>
+      <div class="stat-line"><span>Clans awakened</span><span class="mono" id="statClanCount">0</span></div>
+      <div class="stat-line"><span>Traits manifested</span><span class="mono" id="statTraitCount">0</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- reveal modal -->
+<div class="reveal-overlay" id="revealOverlay">
+  <div class="seal-frame reveal-card">
+    <div class="curse-mark"></div>
+    <div class="reveal-rarity" id="revealRarity">RARE</div>
+    <div class="reveal-name" id="revealName">Item Name</div>
+    <div class="reveal-cat" id="revealCat">technique</div>
+    <button class="btn" id="revealCloseBtn">Continue</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG — fill these in from Supabase → Project Settings → API
+   ============================================================ */
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ============================================================
+   GAME DATA
+   ============================================================ */
+const RARITIES = [
+  { key:'common',       label:'Common',       weight:55, color:'var(--common)',    bonus:0.02 },
+  { key:'rare',         label:'Rare',         weight:27, color:'var(--rare)',      bonus:0.05 },
+  { key:'epic',         label:'Epic',         weight:12, color:'var(--epic)',      bonus:0.12 },
+  { key:'legendary',    label:'Legendary',    weight:5,  color:'var(--legendary)', bonus:0.25 },
+  { key:'special_grade',label:'Special Grade',weight:1,  color:'var(--special)',   bonus:0.50 },
+];
+const RARITY_BY_KEY = Object.fromEntries(RARITIES.map(r=>[r.key,r]));
+const TOTAL_WEIGHT = RARITIES.reduce((s,r)=>s+r.weight,0);
+
+const POOLS = {
+  technique: {
+    common:['Cursed Energy Manipulation','Reinforcement','Simple Domain Sense','Basic Barrier Technique'],
+    rare:['Cursed Speech (Minor)','Enhanced Reflexes','Boogie Woogie','Straw Doll Technique'],
+    epic:['Ten Shadows (Partial)','Blood Manipulation','Cursed Speech','Idle Transfiguration (Partial)'],
+    legendary:['Limitless: Infinity','Ratio Technique','Malevolent Kitchen','Ten Shadows (Full)'],
+    special_grade:['Six Eyes + Limitless','Malevolent Shrine','Agito','Disaster Flames'],
+  },
+  clan:{
+    common:['Civilian Bloodline','Minor Sorcerer Family','Exorcist Lineage','Talisman Crafters'],
+    rare:['Kamo Branch Family','Zen\'in Branch Family','Inumaki Minor Line','Iori Branch'],
+    epic:['Kamo Clan','Todo Family','Okkotsu Line','Fushiguro Branch'],
+    legendary:['Zen\'in Clan','Gojo Distant Branch','Kamo Main House','Zen\'in Elder Line'],
+    special_grade:['Gojo Clan (Six Eyes Bloodline)','Star Plasma Vessel Lineage','Original Zen\'in Bloodline','Death Painting Lineage'],
+  },
+  trait:{
+    common:['Stable Output','Faint Aura','Modest Reserves','Basic Control'],
+    rare:['Overflowing Reserves','Precise Control','Sharp Aura','Adaptive Flow'],
+    epic:['Explosive Output','Compressed Energy','Resonant Aura','Rapid Regeneration'],
+    legendary:['Bottomless Reserves','Perfect Control','Overwhelming Presence','Twin Meridians'],
+    special_grade:['Six Eyes Clarity','Cursed Womb Bloodline','Immeasurable Aura','Reverse Technique Affinity'],
+  }
+};
+
+const GRADES = ['Grade 4','Grade 3','Grade 2','Grade 1','Semi-Special Grade','Special Grade'];
+const REBIRTH_LEVEL = 60;
+const MISSION_COOLDOWN_MS = 45000;
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let session = null;
+let player = null;        // player_stats row
+let inventory = [];        // player_inventory rows
+let currentBanner = 'technique';
+let currentInvCat = 'technique';
+let autosaveTimer = null;
+let missionTickTimer = null;
+
+/* ============================================================
+   AUTH UI
+   ============================================================ */
+let authMode = 'signin';
+const authToggleText = document.getElementById('authToggleText');
+const authToggleLink = document.getElementById('authToggleLink');
+const authSubmitBtn = document.getElementById('authSubmitBtn');
+const authError = document.getElementById('authError');
+
+authToggleLink.addEventListener('click', ()=>{
+  authMode = authMode === 'signin' ? 'signup' : 'signin';
+  if(authMode === 'signup'){
+    authToggleText.textContent = 'Already bound?';
+    authToggleLink.textContent = 'Sign in';
+    authSubmitBtn.textContent = 'Create Account';
+  } else {
+    authToggleText.textContent = 'New sorcerer?';
+    authToggleLink.textContent = 'Create an account';
+    authSubmitBtn.textContent = 'Enter the Curtain';
+  }
+  authError.textContent = '';
+});
+
+authSubmitBtn.addEventListener('click', async ()=>{
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  authError.textContent = '';
+  if(!email || !password){ authError.textContent = 'Enter an email and password.'; return; }
+
+  authSubmitBtn.disabled = true;
+  try{
+    if(authMode === 'signup'){
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if(error) throw error;
+      if(!data.session){
+        authError.textContent = 'Account created. Check your email to confirm, then sign in.';
+        authSubmitBtn.disabled = false;
+        return;
+      }
+      session = data.session;
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw error;
+      session = data.session;
+    }
+    await enterGame();
+  }catch(err){
+    authError.textContent = err.message || 'Something went wrong.';
+  }finally{
+    authSubmitBtn.disabled = false;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+  clearInterval(autosaveTimer);
+  clearInterval(missionTickTimer);
+  await savePlayer();
+  await sb.auth.signOut();
+  session = null; player = null; inventory = [];
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+});
+
+/* ============================================================
+   BOOT — check for existing session
+   ============================================================ */
+(async function boot(){
+  const { data } = await sb.auth.getSession();
+  if(data.session){
+    session = data.session;
+    await enterGame();
+  }
+})();
+
+async function enterGame(){
+  await loadPlayer();
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  renderAll();
+  autosaveTimer = setInterval(savePlayer, 15000);
+  missionTickTimer = setInterval(updateMissionCooldownUI, 1000);
+}
+
+/* ============================================================
+   DATA LOAD / SAVE
+   ============================================================ */
+async function loadPlayer(){
+  const uid = session.user.id;
+
+  let { data: stats, error } = await sb.from('player_stats').select('*').eq('user_id', uid).maybeSingle();
+  if(!stats){
+    // fallback in case the DB trigger hasn't fired yet
+    const insertRes = await sb.from('player_stats').insert({ user_id: uid }).select().single();
+    stats = insertRes.data;
+  }
+  player = stats;
+
+  const { data: inv } = await sb.from('player_inventory').select('*').eq('user_id', uid).order('obtained_at', { ascending:false });
+  inventory = inv || [];
+}
+
+async function savePlayer(){
+  if(!player) return;
+  const uid = session.user.id;
+  await sb.from('player_stats').update({
+    currency: Math.floor(player.currency),
+    tickets: Math.floor(player.tickets),
+    exp: Math.floor(player.exp),
+    level: player.level,
+    rebirths: player.rebirths,
+    equipped_technique: player.equipped_technique,
+    equipped_technique_rarity: player.equipped_technique_rarity,
+    equipped_clan: player.equipped_clan,
+    equipped_clan_rarity: player.equipped_clan_rarity,
+    equipped_trait: player.equipped_trait,
+    equipped_trait_rarity: player.equipped_trait_rarity,
+    last_mission_at: player.last_mission_at,
+    updated_at: new Date().toISOString(),
+  }).eq('user_id', uid);
+}
+
+/* ============================================================
+   DERIVED STATS
+   ============================================================ */
+function gradeIndex(){ return Math.min(Math.floor((player.level-1)/10), GRADES.length-1); }
+function gradeName(){ return GRADES[gradeIndex()]; }
+function equipBonus(){
+  let b = 0;
+  if(player.equipped_technique_rarity) b += RARITY_BY_KEY[player.equipped_technique_rarity].bonus;
+  if(player.equipped_clan_rarity) b += RARITY_BY_KEY[player.equipped_clan_rarity].bonus;
+  if(player.equipped_trait_rarity) b += RARITY_BY_KEY[player.equipped_trait_rarity].bonus;
+  return b;
+}
+function rebirthMult(){ return 1 + player.rebirths * 0.15; }
+function totalMult(){ return (1 + equipBonus()) * rebirthMult(); }
+function expToNext(){ return 50 + (player.level-1) * 35; }
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function gainExpAndLevel(exp){
+  player.exp += exp;
+  while(player.exp >= expToNext()){
+    player.exp -= expToNext();
+    player.level += 1;
+  }
+}
+
+document.getElementById('trainBtn').addEventListener('click', (e)=>{
+  const base = 10 + player.level * 3;
+  const variance = 0.9 + Math.random()*0.2;
+  const gain = Math.round(base * totalMult() * variance);
+  const exp = 8 + Math.floor(player.level/5);
+  player.currency += gain;
+  gainExpAndLevel(exp);
+  floatText(e.clientX, e.clientY, `+${gain} CE`);
+  renderAll();
+});
+
+document.getElementById('missionBtn').addEventListener('click', async (e)=>{
+  if(missionRemaining() > 0) return;
+  const base = 10 + player.level * 3;
+  const ceGain = Math.round(base * totalMult() * 4);
+  const luckRoll = Math.random();
+  let tickets = 1;
+  if(luckRoll < 0.02) tickets = 3;
+  else if(luckRoll < 0.12) tickets = 2;
+  player.currency += ceGain;
+  player.tickets += tickets;
+  gainExpAndLevel(20 + Math.floor(player.level/3));
+  player.last_mission_at = new Date().toISOString();
+  floatText(e.clientX, e.clientY, `+${ceGain} CE, +${tickets} Ticket${tickets>1?'s':''}`);
+  renderAll();
+  await savePlayer();
+});
+
+function missionRemaining(){
+  if(!player.last_mission_at) return 0;
+  const elapsed = Date.now() - new Date(player.last_mission_at).getTime();
+  return Math.max(0, MISSION_COOLDOWN_MS - elapsed);
+}
+function updateMissionCooldownUI(){
+  if(!player) return;
+  const rem = missionRemaining();
+  const btn = document.getElementById('missionBtn');
+  const note = document.getElementById('missionCooldownNote');
+  if(rem > 0){
+    btn.disabled = true;
+    note.textContent = `Ready in ${Math.ceil(rem/1000)}s`;
+  } else {
+    btn.disabled = false;
+    note.textContent = 'Ready now';
+  }
+}
+
+document.getElementById('rebirthBtn').addEventListener('click', async ()=>{
+  if(player.level < REBIRTH_LEVEL) return;
+  if(!confirm('Reincarnate now? Your currency, level and grade will reset, but you keep your inventory, equipped items, and gain a permanent +15% power multiplier.')) return;
+  player.rebirths += 1;
+  player.level = 1;
+  player.exp = 0;
+  player.currency = 0;
+  renderAll();
+  await savePlayer();
+  showToast('You have reincarnated. Power multiplier increased.');
+});
+
+/* ---- gacha ---- */
+document.querySelectorAll('.banner-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.banner-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentBanner = btn.dataset.banner;
+    renderRarityTable();
+  });
+});
+
+function rollRarity(){
+  let roll = Math.random() * TOTAL_WEIGHT;
+  for(const r of RARITIES){
+    if(roll < r.weight) return r.key;
+    roll -= r.weight;
+  }
+  return 'common';
+}
+
+async function doRoll(category){
+  const rarity = rollRarity();
+  const pool = POOLS[category][rarity];
+  const name = pool[Math.floor(Math.random()*pool.length)];
+  const row = { user_id: session.user.id, category, item_name: name, rarity };
+  const { data, error } = await sb.from('player_inventory').insert(row).select().single();
+  if(!error && data) inventory.unshift(data);
+  else inventory.unshift(row);
+  return { name, rarity, category };
+}
+
+document.getElementById('rollOneBtn').addEventListener('click', async ()=>{
+  if(player.tickets < 10){ showToast('Not enough Domain Tickets.'); return; }
+  player.tickets -= 10;
+  const result = await doRoll(currentBanner);
+  renderAll();
+  showReveal(result);
+  await savePlayer();
+});
+
+document.getElementById('rollTenBtn').addEventListener('click', async ()=>{
+  if(player.tickets < 90){ showToast('Not enough Domain Tickets.'); return; }
+  player.tickets -= 90;
+  const results = [];
+  for(let i=0;i<10;i++) results.push(await doRoll(currentBanner));
+  renderAll();
+  // show the best rarity pulled
+  const order = RARITIES.map(r=>r.key);
+  results.sort((a,b)=>order.indexOf(b.rarity)-order.indexOf(a.rarity));
+  showReveal(results[0], `Best of 10 — ${results.length} items bound`);
+  await savePlayer();
+});
+
+const revealOverlay = document.getElementById('revealOverlay');
+function showReveal(result, subtitle){
+  const r = RARITY_BY_KEY[result.rarity];
+  document.getElementById('revealRarity').textContent = r.label + (subtitle ? ` · ${subtitle}` : '');
+  document.getElementById('revealRarity').style.color = r.color;
+  document.getElementById('revealName').textContent = result.name;
+  document.getElementById('revealName').style.textShadow = `0 0 18px ${r.color}`;
+  document.getElementById('revealCat').textContent = result.category;
+  revealOverlay.style.display = 'flex';
+}
+document.getElementById('revealCloseBtn').addEventListener('click', ()=> revealOverlay.style.display = 'none');
+
+/* ---- inventory equip ---- */
+document.querySelectorAll('.inv-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.inv-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentInvCat = tab.dataset.cat;
+    renderInventory();
+  });
+});
+
+async function equipItem(category, name, rarity){
+  player['equipped_'+category] = name;
+  player['equipped_'+category+'_rarity'] = rarity;
+  renderAll();
+  await savePlayer();
+  showToast(`Equipped ${name}`);
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderAll(){
+  document.getElementById('ceVal').textContent = Math.floor(player.currency).toLocaleString();
+  document.getElementById('tkVal').textContent = Math.floor(player.tickets).toLocaleString();
+  document.getElementById('gradeLabel').textContent = gradeName() + ' Sorcerer';
+  document.getElementById('gradeVal2').textContent = gradeName();
+  document.getElementById('levelVal').textContent = player.level;
+
+  const pct = Math.min(100, (player.exp/expToNext())*100);
+  document.getElementById('xpBar').style.width = pct + '%';
+  document.getElementById('xpText').textContent = `${Math.floor(player.exp)} / ${expToNext()} EXP`;
+  document.getElementById('multText').textContent = `×${totalMult().toFixed(2)} total power`;
+
+  document.getElementById('rebirthPanel').style.display = player.level >= REBIRTH_LEVEL ? 'block' : 'none';
+
+  updateMissionCooldownUI();
+  renderRarityTable();
+  renderInventory();
+  renderProfile();
+}
+
+function renderRarityTable(){
+  const el = document.getElementById('rarityTable');
+  el.innerHTML = RARITIES.map(r=>{
+    const chance = ((r.weight/TOTAL_WEIGHT)*100).toFixed(r.weight<2?1:0);
+    return `<div class="rarity-row">
+      <span><span class="rarity-dot" style="background:${r.color}"></span>${r.label} <span style="color:var(--text-muted)">(+${Math.round(r.bonus*100)}% power)</span></span>
+      <span class="mono">${chance}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderInventory(){
+  const items = inventory.filter(i=>i.category === currentInvCat);
+  const list = document.getElementById('invList');
+  if(items.length === 0){
+    list.innerHTML = `<div class="empty-note">No ${currentInvCat}s bound yet. Try the Gacha tab.</div>`;
+    return;
+  }
+  list.innerHTML = items.map(i=>{
+    const r = RARITY_BY_KEY[i.rarity];
+    const equippedKey = 'equipped_'+i.category;
+    const isEquipped = player[equippedKey] === i.item_name;
+    return `<div class="item-row">
+      <div class="item-name-wrap">
+        <span class="item-rarity-tag" style="background:${r.color}22; color:${r.color}; border:1px solid ${r.color}55;">${r.label}</span>
+        <span>${i.item_name}</span>
+      </div>
+      <button class="btn ${isEquipped?'secondary':''}" style="width:auto; padding:6px 12px; font-size:12px;" data-equip-name="${encodeURIComponent(i.item_name)}" data-equip-cat="${i.category}" data-equip-rarity="${i.rarity}" ${isEquipped?'disabled':''}>
+        ${isEquipped ? 'Equipped' : 'Equip'}
+      </button>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('[data-equip-name]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      equipItem(btn.dataset.equipCat, decodeURIComponent(btn.dataset.equipName), btn.dataset.equipRarity);
+    });
+  });
+}
+
+function renderProfile(){
+  document.getElementById('eqTechnique').textContent = player.equipped_technique || 'None';
+  document.getElementById('eqClan').textContent = player.equipped_clan || 'None';
+  document.getElementById('eqTrait').textContent = player.equipped_trait || 'None';
+  document.getElementById('statGrade').textContent = gradeName();
+  document.getElementById('statLevel').textContent = player.level;
+  document.getElementById('statRebirths').textContent = player.rebirths;
+  document.getElementById('statMult').textContent = '×' + totalMult().toFixed(2);
+  document.getElementById('statTechCount').textContent = inventory.filter(i=>i.category==='technique').length;
+  document.getElementById('statClanCount').textContent = inventory.filter(i=>i.category==='clan').length;
+  document.getElementById('statTraitCount').textContent = inventory.filter(i=>i.category==='trait').length;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============================================================
+   MISC UI HELPERS
+   ============================================================ */
+function floatText(x,y,text){
+  const el = document.createElement('div');
+  el.className = 'float-gain';
+  el.textContent = text;
+  el.style.left = (x-20)+'px';
+  el.style.top = (y-20)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1000);
+}
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// save on tab close
+window.addEventListener('beforeunload', ()=>{ if(player) savePlayer(); });
+</script>
 </body>
 </html>
