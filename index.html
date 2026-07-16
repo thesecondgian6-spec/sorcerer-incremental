@@ -222,6 +222,8 @@
     <div class="tab-btn" data-tab="shop">Shop</div>
     <div class="tab-btn" data-tab="inventory">Inventory</div>
     <div class="tab-btn" data-tab="stats">Stats</div>
+    <div class="tab-btn" data-tab="leaderboard">Leaderboard</div>
+    <div class="tab-btn" data-tab="admin">Admin</div>
   </div>
 
   <div class="tab-panel active" id="tab-train">
@@ -380,9 +382,48 @@
     </div>
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
+      <h2>Skill Ascension</h2>
+      <p class="sub">Permanently strengthen the battle skill tied to each equipped item slot — stronger multiplier, shorter cooldown.</p>
+      <div class="item-list" id="ascensionList"></div>
+    </div>
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
       <h2>Upgrades</h2>
       <p class="sub">Spend Cursed Energy to permanently strengthen your sorcerer.</p>
       <div class="item-list" id="upgradeList"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-leaderboard">
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Leaderboard</h2>
+      <p class="sub">Ranked by reincarnations, then level, then story progress. Only usernames and these stats are shared — never your Cursed Energy or Domain Tickets.</p>
+      <div class="item-list" id="leaderboardList"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-admin">
+    <div class="seal-frame panel" id="adminLockedPanel">
+      <div class="curse-mark"></div>
+      <h2>Admin Access</h2>
+      <p class="sub">Enter the dev passcode to unlock testing tools. Set your own in <span class="mono">ADMIN_PASSCODE</span> at the top of the script.</p>
+      <div class="field"><input type="password" id="adminPasscodeInput" placeholder="Passcode" /></div>
+      <button class="btn" id="adminUnlockBtn">Unlock</button>
+    </div>
+    <div class="seal-frame panel" id="adminToolsPanel" style="display:none;">
+      <div class="curse-mark"></div>
+      <h2>Dev Tools</h2>
+      <p class="sub">For local testing only — not meant for regular players.</p>
+      <div class="item-list">
+        <div class="item-row"><span>Add 10,000 Cursed Energy</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="add_ce">Apply</button></div>
+        <div class="item-row"><span>Add 100 Domain Tickets</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="add_tickets">Apply</button></div>
+        <div class="item-row"><span>Add 10 Levels</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="add_levels">Apply</button></div>
+        <div class="item-row"><span>Clear all cooldowns</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="clear_cooldowns">Apply</button></div>
+        <div class="item-row"><span>Reset Main Story progress</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="reset_story">Apply</button></div>
+        <div class="item-row"><span>Reset Colony Rank</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="reset_colony">Apply</button></div>
+        <div class="item-row"><span>Grant random Special Grade item</span><button class="btn" style="width:auto; padding:8px 14px;" data-admin="grant_special">Apply</button></div>
+      </div>
     </div>
   </div>
 </div>
@@ -444,6 +485,13 @@ const CATEGORY_META = [
   { key:'trait',       label:'CE Traits' },
 ];
 const SKILL_CATEGORIES = ['technique','companion','tool'];
+
+const ADMIN_PASSCODE = "meogacha-dev";
+const ASCENSION_DEFS = [
+  { key:'technique', name:'Technique Mastery', icon:'🌀', desc:'Strengthens your equipped Technique skill in battle.' },
+  { key:'companion',  name:'Companion Bond',    icon:'🤝', desc:'Strengthens your equipped Companion skill in battle.' },
+  { key:'tool',        name:'Tool Mastery',       icon:'🗡️', desc:'Strengthens your equipped Cursed Tool skill in battle.' },
+];
 
 const POOLS = {
   technique: {
@@ -530,25 +578,25 @@ const SHOP_REFRESH_MS = 6 * 3600 * 1000;
 const ARCS_RAW = [
   { name:'Introduction', stages:[
     { name:'Grade 4 Curse' }, { name:'Grade 3 Curse' }, { name:'Grade 2 Curse' },
-    { name:'Cursed Womb: Death Painting (Eso)' }, { name:'Cursed Womb: Death Painting (Kechizu)', boss:true },
+    { name:'Cursed Womb: Death Painting (Eso)' }, { name:'Cursed Womb: Death Painting (Kechizu)', boss:true, pattern:'regen' },
   ]},
   { name:'Vs. Mahito', stages:[
-    { name:'Grade 2 Curse Swarm' }, { name:'Grade 1 Curse' }, { name:'Mahito\'s Transfigured Human' }, { name:'Mahito', boss:true },
+    { name:'Grade 2 Curse Swarm' }, { name:'Grade 1 Curse' }, { name:'Mahito\'s Transfigured Human' }, { name:'Mahito', boss:true, pattern:'frenzy' },
   ]},
   { name:'Kyoto Sister School Exchange', stages:[
-    { name:'Kamo Clan Branch Curse User' }, { name:'Mechamaru (Kokichi Muta)' }, { name:'Aoi Todo (Sparring Match)' }, { name:'Hanami', boss:true },
+    { name:'Kamo Clan Branch Curse User' }, { name:'Mechamaru (Kokichi Muta)' }, { name:'Aoi Todo (Sparring Match)' }, { name:'Hanami', boss:true, pattern:'charge' },
   ]},
   { name:'Shibuya Incident', stages:[
-    { name:'Grade 1 Curse Swarm' }, { name:'Jogo' }, { name:'Dagon' }, { name:'Choso' }, { name:'Mahito, Perfected', boss:true },
+    { name:'Grade 1 Curse Swarm' }, { name:'Jogo' }, { name:'Dagon' }, { name:'Choso' }, { name:'Mahito, Perfected', boss:true, pattern:'frenzy' },
   ]},
   { name:'Perfect Preparation', stages:[
-    { name:'Kenjaku\'s Puppet' }, { name:'Culling Game Rule Enforcer' }, { name:'Rogue Sorcerer (Colony Participant)' }, { name:'Kenjaku', boss:true },
+    { name:'Kenjaku\'s Puppet' }, { name:'Culling Game Rule Enforcer' }, { name:'Rogue Sorcerer (Colony Participant)' }, { name:'Kenjaku', boss:true, pattern:'regen' },
   ]},
   { name:'The Culling Game', stages:[
-    { name:'Culling Game Player (Cursed Tool User)' }, { name:'Culling Game Player (Special Grade Vessel)' }, { name:'Hajime Kashimo (Sparring)' }, { name:'Hajime Kashimo, Serious', boss:true },
+    { name:'Culling Game Player (Cursed Tool User)' }, { name:'Culling Game Player (Special Grade Vessel)' }, { name:'Hajime Kashimo (Sparring)' }, { name:'Hajime Kashimo, Serious', boss:true, pattern:'charge' },
   ]},
   { name:'Shinjuku Showdown', stages:[
-    { name:'Cursed Corpse Swarm' }, { name:'Uraume' }, { name:'Ryomen Sukuna (Fraction of Power)' }, { name:'Ryomen Sukuna, King of Curses', boss:true },
+    { name:'Cursed Corpse Swarm' }, { name:'Uraume' }, { name:'Ryomen Sukuna (Fraction of Power)' }, { name:'Ryomen Sukuna, King of Curses', boss:true, pattern:'frenzy' },
   ]},
 ];
 const FLAT_STAGES = [];
@@ -561,6 +609,7 @@ const FLAT_STAGES = [];
       FLAT_STAGES.push({
         globalIndex: gi, arcIndex, arcName: arc.name, stageIndexInArc,
         name: stage.name, isBoss: !!stage.boss, requiredPower: req,
+        pattern: stage.pattern || 'charge',
         rewardCE: Math.round(req * 0.35),
         rewardTickets: stage.boss ? 5 + Math.floor(gi/6) : 1 + Math.floor(gi/5),
       });
@@ -660,6 +709,7 @@ async function loadPlayer(){
   player.missions = player.missions || {};
   player.shop_state = player.shop_state || {};
   player.boosts = player.boosts || [];
+  player.ascension = player.ascension || {};
   player.colony_rank = player.colony_rank || 0;
   player.fightclub_streak = player.fightclub_streak || 0;
 
@@ -689,6 +739,7 @@ async function savePlayer(){
     missions: player.missions,
     shop_state: player.shop_state,
     boosts: player.boosts,
+    ascension: player.ascension,
     updated_at: new Date().toISOString(),
   }).eq('user_id', uid);
 }
@@ -704,6 +755,15 @@ function equipBonus(){
   return b;
 }
 function upg(key){ return (player.upgrades && player.upgrades[key]) || 0; }
+function asc(key){ return (player.ascension && player.ascension[key]) || 0; }
+function ascensionCost(key){ return Math.round(200 * Math.pow(1.22, asc(key))); }
+async function buyAscension(key){
+  const cost = ascensionCost(key);
+  if(player.currency < cost){ showToast('Not enough Cursed Energy.'); return; }
+  player.currency -= cost;
+  player.ascension[key] = asc(key) + 1;
+  renderAll(); await savePlayer();
+}
 function activeBoostBonus(type){
   return (player.boosts||[]).filter(b=> b.type===type && new Date(b.expiresAt).getTime() > Date.now()).reduce((s,b)=>s+b.bonus,0);
 }
@@ -766,6 +826,40 @@ function initDynamicUI(){
 
   document.getElementById('cullingChallengeBtn').addEventListener('click', challengeColony);
   document.getElementById('battleRetreatBtn').addEventListener('click', ()=> endBattle(false, true));
+
+  document.getElementById('adminUnlockBtn').addEventListener('click', ()=>{
+    const val = document.getElementById('adminPasscodeInput').value;
+    if(val === ADMIN_PASSCODE){
+      document.getElementById('adminLockedPanel').style.display = 'none';
+      document.getElementById('adminToolsPanel').style.display = 'block';
+    } else {
+      showToast('Incorrect passcode.');
+    }
+  });
+  document.querySelectorAll('[data-admin]').forEach(btn=>{
+    btn.addEventListener('click', ()=> runAdminAction(btn.dataset.admin));
+  });
+}
+
+async function runAdminAction(action){
+  if(action === 'add_ce') player.currency += 10000;
+  else if(action === 'add_tickets') player.tickets += 100;
+  else if(action === 'add_levels'){ for(let i=0;i<10;i++) gainExpAndLevel(expToNext()); }
+  else if(action === 'clear_cooldowns'){ player.activities = {}; player.missions = {}; }
+  else if(action === 'reset_story') player.story_progress = 0;
+  else if(action === 'reset_colony') player.colony_rank = 0;
+  else if(action === 'grant_special'){
+    const categories = CATEGORY_META.map(c=>c.key);
+    const category = categories[Math.floor(Math.random()*categories.length)];
+    const pool = POOLS[category]['special_grade'];
+    const name = pool[Math.floor(Math.random()*pool.length)];
+    const row = { user_id: session.user.id, category, item_name: name, rarity:'special_grade' };
+    const { data, error } = await sb.from('player_inventory').insert(row).select().single();
+    if(!error && data) inventory.unshift(data); else inventory.unshift(row);
+  }
+  showToast(`Admin action applied: ${action}`);
+  renderAll();
+  await savePlayer();
 }
 
 document.getElementById('trainBtn').addEventListener('click', (e)=>{
@@ -915,6 +1009,24 @@ async function buyUpgrade(key){
   player.currency -= cost;
   player.upgrades[key] = upg(key) + 1;
   renderAll(); await savePlayer();
+}
+function renderAscension(){
+  const el = document.getElementById('ascensionList');
+  el.innerHTML = ASCENSION_DEFS.map(def=>{
+    const lvl = asc(def.key); const cost = ascensionCost(def.key); const afford = player.currency >= cost;
+    const equipped = player['equipped_'+def.key];
+    return `<div class="item-row">
+      <div class="item-name-wrap">
+        <span style="font-size:18px;">${def.icon}</span>
+        <div><div style="font-weight:600;">${def.name} <span class="mono" style="color:var(--text-muted); font-size:11px;">Lv.${lvl}</span></div>
+        <div style="font-size:11px; color:var(--text-muted);">${equipped ? `Applies to: ${equipped}` : 'No item equipped in this slot'}</div></div>
+      </div>
+      <button class="btn ${afford?'':'secondary'}" style="width:auto; padding:8px 14px;" data-ascend="${def.key}" ${afford?'':'disabled'}>${cost.toLocaleString()} CE</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-ascend]').forEach(btn=>{
+    btn.addEventListener('click', ()=> buyAscension(btn.dataset.ascend));
+  });
 }
 function renderUpgrades(){
   const el = document.getElementById('upgradeList');
@@ -1098,7 +1210,10 @@ function buildSkillsFromEquip(){
     const rarity = player['equipped_'+cat+'_rarity'];
     if(name && rarity && RARITY_SKILL_STATS[rarity]){
       const st = RARITY_SKILL_STATS[rarity];
-      skills.push({ key:cat, name, mult:st.mult, cooldown:st.cooldown, remaining:0 });
+      const ascLvl = asc(cat);
+      const mult = st.mult + ascLvl * 0.15;
+      const cooldown = Math.max(1, st.cooldown - Math.floor(ascLvl/3));
+      skills.push({ key:cat, name, mult, cooldown, remaining:0 });
     }
   });
   return skills;
@@ -1111,6 +1226,9 @@ function startBattle(enemyDef){
     enemyHp: enemyDef.hp,
     enemyAtk: enemyDef.atk,
     isBoss: !!enemyDef.isBoss,
+    pattern: enemyDef.pattern || 'charge',
+    turnCount: 0,
+    charging: false,
     playerMaxHp: playerMaxHP(),
     playerHp: playerMaxHP(),
     skills: buildSkillsFromEquip(),
@@ -1134,8 +1252,10 @@ function battleAction(actionKey){
     label = skill.name;
   }
   dmg = Math.max(1, Math.round(dmg * (0.85 + Math.random()*0.3)));
+  let isCrit = false;
+  if(Math.random() < 0.15){ dmg = Math.round(dmg * 1.5); isCrit = true; }
   battleState.enemyHp = Math.max(0, battleState.enemyHp - dmg);
-  battleState.log.push(`You used ${label} for ${dmg.toLocaleString()} damage.`);
+  battleState.log.push(isCrit ? `You used ${label} for a CRITICAL ${dmg.toLocaleString()} damage!` : `You used ${label} for ${dmg.toLocaleString()} damage.`);
   battleState.skills.forEach(s=>{ if(s.key !== actionKey && s.remaining > 0) s.remaining--; });
 
   if(battleState.enemyHp <= 0){
@@ -1145,9 +1265,35 @@ function battleAction(actionKey){
     return;
   }
 
-  const edmg = Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3)));
-  battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
-  battleState.log.push(`${battleState.enemyName} attacks you for ${edmg.toLocaleString()} damage.`);
+  battleState.turnCount++;
+  if(battleState.isBoss && battleState.charging){
+    battleState.charging = false;
+    if(battleState.pattern === 'regen'){
+      const heal = Math.round(battleState.enemyMaxHp * 0.15);
+      battleState.enemyHp = Math.min(battleState.enemyMaxHp, battleState.enemyHp + heal);
+      battleState.log.push(`${battleState.enemyName} regenerates ${heal.toLocaleString()} HP!`);
+    } else if(battleState.pattern === 'frenzy'){
+      let total = 0;
+      for(let i=0;i<2;i++){ total += Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3))); }
+      battleState.playerHp = Math.max(0, battleState.playerHp - total);
+      battleState.log.push(`${battleState.enemyName} enters a frenzy, striking twice for ${total.toLocaleString()} total damage!`);
+    } else {
+      const edmg = Math.max(1, Math.round(battleState.enemyAtk * 2.4));
+      battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
+      battleState.log.push(`${battleState.enemyName} unleashes a devastating attack for ${edmg.toLocaleString()} damage!`);
+    }
+  } else if(battleState.isBoss && battleState.turnCount % 4 === 0){
+    battleState.charging = true;
+    const msg = battleState.pattern === 'regen' ? `${battleState.enemyName} begins gathering cursed energy to heal...`
+      : battleState.pattern === 'frenzy' ? `${battleState.enemyName} bares its full power, entering a frenzied state...`
+      : `${battleState.enemyName} begins charging a devastating attack...`;
+    battleState.log.push(msg);
+  } else {
+    const edmg = Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3)));
+    battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
+    battleState.log.push(`${battleState.enemyName} attacks you for ${edmg.toLocaleString()} damage.`);
+  }
+
   if(battleState.playerHp <= 0){
     battleState.log.push(`You have been defeated. Retreating...`);
     renderBattle();
@@ -1161,7 +1307,9 @@ function renderBattle(){
   if(!battleState) return;
   const enemyPct = Math.max(0, (battleState.enemyHp/battleState.enemyMaxHp)*100);
   const playerPct = Math.max(0, (battleState.playerHp/battleState.playerMaxHp)*100);
-  document.getElementById('battleEnemyName').textContent = battleState.enemyName + (battleState.isBoss ? ' ⚔' : '');
+  const enemyNameEl = document.getElementById('battleEnemyName');
+  enemyNameEl.textContent = battleState.enemyName + (battleState.isBoss ? ' ⚔' : '') + (battleState.charging ? ' ⚠' : '');
+  enemyNameEl.style.color = battleState.charging ? 'var(--special)' : '';
   document.getElementById('battleEnemyHpText').textContent = `${Math.max(0,battleState.enemyHp).toLocaleString()} / ${battleState.enemyMaxHp.toLocaleString()}`;
   document.getElementById('battleEnemyHpBar').style.width = enemyPct + '%';
   document.getElementById('battlePlayerHpText').textContent = `${Math.max(0,battleState.playerHp).toLocaleString()} / ${battleState.playerMaxHp.toLocaleString()}`;
@@ -1244,7 +1392,7 @@ function engageStage(stage){
   if(storyProgress() !== stage.globalIndex) return;
   const enemyHp = Math.max(20, Math.round(stage.requiredPower * 0.6));
   const enemyAtk = Math.max(4, Math.round(stage.requiredPower * 0.045));
-  startBattle({ name: stage.name, hp: enemyHp, atk: enemyAtk, isBoss: stage.isBoss, meta:{ type:'story', stage } });
+  startBattle({ name: stage.name, hp: enemyHp, atk: enemyAtk, isBoss: stage.isBoss, pattern: stage.pattern, meta:{ type:'story', stage } });
 }
 
 function renderStory(){
@@ -1292,7 +1440,11 @@ function challengeColony(){
   const req = colonyRequiredPower(player.colony_rank);
   const enemyHp = Math.max(20, Math.round(req * 0.6));
   const enemyAtk = Math.max(4, Math.round(req * 0.045));
-  startBattle({ name: COLONY_OPPONENTS[player.colony_rank % COLONY_OPPONENTS.length], hp: enemyHp, atk: enemyAtk, isBoss:false, meta:{ type:'colony', req } });
+  const isMilestone = (player.colony_rank + 1) % 5 === 0;
+  const patterns = ['charge','regen','frenzy'];
+  const pattern = patterns[Math.floor(player.colony_rank/5) % patterns.length];
+  const name = COLONY_OPPONENTS[player.colony_rank % COLONY_OPPONENTS.length] + (isMilestone ? ' — Colony Elite' : '');
+  startBattle({ name, hp: enemyHp, atk: enemyAtk, isBoss: isMilestone, pattern, meta:{ type:'colony', req } });
 }
 function renderCulling(){
   document.getElementById('cullingRank').textContent = player.colony_rank;
@@ -1363,6 +1515,7 @@ function renderStats(){
     const count = inventory.filter(i=>i.category===c.key).length;
     return `<div class="stat-line"><span>${c.label} bound</span><span class="mono">${count}</span></div>`;
   }).join('');
+  renderAscension();
   renderUpgrades();
 }
 
@@ -1395,8 +1548,24 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab === 'leaderboard') loadLeaderboard();
   });
 });
+
+async function loadLeaderboard(){
+  const el = document.getElementById('leaderboardList');
+  el.innerHTML = `<div class="empty-note">Loading...</div>`;
+  const { data, error } = await sb.rpc('get_leaderboard', { limit_count: 20 });
+  if(error || !data){
+    el.innerHTML = `<div class="empty-note">Couldn't load the leaderboard right now.</div>`;
+    return;
+  }
+  if(data.length === 0){ el.innerHTML = `<div class="empty-note">No sorcerers ranked yet.</div>`; return; }
+  el.innerHTML = data.map((row,i)=> `<div class="item-row">
+    <div class="item-name-wrap"><span class="mono" style="color:var(--text-muted); width:22px;">#${i+1}</span><span>${row.username || 'Unnamed Sorcerer'}</span></div>
+    <span class="mono" style="font-size:12px; color:var(--text-muted);">Lv.${row.level} · ${row.rebirths} rebirths · ${row.story_progress}/${FLAT_STAGES.length} stages</span>
+  </div>`).join('');
+}
 
 function floatText(x,y,text){
   const el = document.createElement('div');
