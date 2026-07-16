@@ -117,15 +117,35 @@
     position:fixed; inset:0; background:rgba(6,6,12,0.88); display:none; align-items:center; justify-content:center;
     z-index:1000; backdrop-filter:blur(3px); padding:16px;
   }
+  .reveal-burst{position:absolute; inset:0; pointer-events:none; opacity:0; z-index:1;}
+  .reveal-burst.flash{animation:burstFlash .7s ease-out;}
+  @keyframes burstFlash{
+    0%{opacity:0;}
+    18%{opacity:1;}
+    100%{opacity:0;}
+  }
   .reveal-card{
     width:280px; padding:34px 22px; text-align:center; background:var(--surface); border:1px solid var(--border);
     clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
-    animation:revealPop .4s cubic-bezier(.2,1.4,.4,1);
+    position:relative; z-index:2;
   }
+  .charge-seal{display:none; flex-direction:column; align-items:center; justify-content:center; height:190px; position:relative;}
+  .charge-ring{
+    width:88px; height:88px; border-radius:50%;
+    border:3px solid transparent; border-top-color:var(--purple); border-right-color:var(--purple-dim);
+    animation:chargeSpin .8s linear infinite;
+  }
+  @keyframes chargeSpin{ to{ transform:rotate(360deg); } }
+  .charge-glyph{position:absolute; font-family:'Cinzel',serif; font-size:26px; color:var(--text-muted); animation:chargePulse .8s ease-in-out infinite;}
+  @keyframes chargePulse{ 0%,100%{opacity:0.35; transform:scale(0.9);} 50%{opacity:0.9; transform:scale(1.08);} }
+  .reveal-content{display:none;}
+  .reveal-content.show{display:block; animation:revealPop .4s cubic-bezier(.2,1.4,.4,1);}
   @keyframes revealPop{ from{transform:scale(.7); opacity:0;} to{transform:scale(1); opacity:1;} }
   .reveal-rarity{font-size:11px; text-transform:uppercase; letter-spacing:0.14em; margin-bottom:10px; font-weight:700;}
   .reveal-name{font-family:'Cinzel',serif; font-size:20px; margin:0 0 8px;}
-  .reveal-cat{font-size:12px; color:var(--text-muted); margin-bottom:18px; text-transform:capitalize;}
+  .reveal-cat{font-size:12px; color:var(--text-muted); margin-bottom:14px; text-transform:capitalize;}
+  .pull-strip{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:18px;}
+  .pull-chip{width:9px; height:9px; border-radius:50%;}
 
   .battle-card{
     width:380px; max-width:100%; padding:26px 22px; background:var(--surface); border:1px solid var(--border);
@@ -142,6 +162,35 @@
   .battle-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
   .battle-actions .btn{font-size:12px; padding:10px 6px;}
   .battle-retreat{margin-top:10px;}
+
+  .battle-card.shake{animation:battleShake .4s ease;}
+  @keyframes battleShake{
+    10%,90%{transform:translateX(-1px);}
+    20%,80%{transform:translateX(2px);}
+    30%,50%,70%{transform:translateX(-5px);}
+    40%,60%{transform:translateX(5px);}
+  }
+  .battle-hp-row{position:relative;}
+  .dmg-pop{
+    position:absolute; right:4px; top:-2px; font-family:'JetBrains Mono',monospace; font-weight:800;
+    font-size:15px; pointer-events:none; animation:dmgPop .75s ease-out forwards; z-index:5;
+    text-shadow:0 1px 4px rgba(0,0,0,0.6);
+  }
+  .dmg-pop.crit{font-size:21px;}
+  .dmg-pop.enemy-dmg{color:var(--purple);}
+  .dmg-pop.player-dmg{color:var(--blood);}
+  .dmg-pop.crit.enemy-dmg{color:var(--legendary);}
+  .dmg-pop.crit.player-dmg{color:var(--special);}
+  @keyframes dmgPop{
+    0%{transform:translateY(2px) scale(0.7); opacity:0;}
+    18%{transform:translateY(-6px) scale(1.2); opacity:1;}
+    100%{transform:translateY(-34px) scale(1); opacity:0;}
+  }
+  .battle-hp-bar-wrap.flash{animation:hpFlash .35s ease;}
+  @keyframes hpFlash{
+    0%,100%{box-shadow:none;}
+    35%{box-shadow:0 0 0 2px #fff, 0 0 14px 3px rgba(255,255,255,0.65);}
+  }
 
   .inv-tabs{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
   .inv-tab{padding:6px 12px; font-size:12px; border:1px solid var(--border); border-radius:4px; color:var(--text-muted); cursor:pointer;}
@@ -429,12 +478,20 @@
 </div>
 
 <div class="reveal-overlay" id="revealOverlay">
+  <div class="reveal-burst" id="revealBurst"></div>
   <div class="seal-frame reveal-card">
     <div class="curse-mark"></div>
-    <div class="reveal-rarity" id="revealRarity">RARE</div>
-    <div class="reveal-name" id="revealName">Item Name</div>
-    <div class="reveal-cat" id="revealCat">technique</div>
-    <button class="btn" id="revealCloseBtn">Continue</button>
+    <div class="charge-seal" id="chargeSeal">
+      <div class="charge-ring"></div>
+      <div class="charge-glyph">呪</div>
+    </div>
+    <div class="reveal-content" id="revealContent">
+      <div class="reveal-rarity" id="revealRarity">RARE</div>
+      <div class="reveal-name" id="revealName">Item Name</div>
+      <div class="reveal-cat" id="revealCat">technique</div>
+      <div class="pull-strip" id="pullStrip"></div>
+      <button class="btn" id="revealCloseBtn">Continue</button>
+    </div>
   </div>
 </div>
 
@@ -1074,18 +1131,50 @@ document.getElementById('rollTenBtn').addEventListener('click', async ()=>{
   renderAll();
   const order = RARITIES.map(r=>r.key);
   results.sort((a,b)=>order.indexOf(b.rarity)-order.indexOf(a.rarity));
-  showReveal(results[0], `Best of 10 — ${results.length} items bound`);
+  showReveal(results[0], `Best of 10 — ${results.length} items bound`, results);
   await savePlayer();
 });
+const REVEAL_CHARGE_MS = { common:400, rare:500, epic:650, legendary:850, special_grade:1100 };
 const revealOverlay = document.getElementById('revealOverlay');
-function showReveal(result, subtitle){
+function showReveal(result, subtitle, allResults){
   const r = RARITY_BY_KEY[result.rarity];
-  document.getElementById('revealRarity').textContent = r.label + (subtitle ? ` · ${subtitle}` : '');
-  document.getElementById('revealRarity').style.color = r.color;
-  document.getElementById('revealName').textContent = result.name;
-  document.getElementById('revealName').style.textShadow = `0 0 18px ${r.color}`;
-  document.getElementById('revealCat').textContent = result.category;
+  const chargeSeal = document.getElementById('chargeSeal');
+  const content = document.getElementById('revealContent');
+  const burst = document.getElementById('revealBurst');
+
+  content.classList.remove('show');
+  content.style.display = 'none';
+  chargeSeal.style.display = 'flex';
   revealOverlay.style.display = 'flex';
+
+  const chargeMs = REVEAL_CHARGE_MS[result.rarity] || 450;
+  setTimeout(()=>{
+    chargeSeal.style.display = 'none';
+    document.getElementById('revealRarity').textContent = r.label + (subtitle ? ` · ${subtitle}` : '');
+    document.getElementById('revealRarity').style.color = r.color;
+    document.getElementById('revealName').textContent = result.name;
+    document.getElementById('revealName').style.textShadow = `0 0 18px ${r.color}`;
+    document.getElementById('revealCat').textContent = result.category;
+
+    const stripEl = document.getElementById('pullStrip');
+    if(allResults && allResults.length > 1){
+      stripEl.innerHTML = allResults.map(res=>{
+        const rr = RARITY_BY_KEY[res.rarity];
+        return `<span class="pull-chip" style="background:${rr.color}" title="${res.name} (${rr.label})"></span>`;
+      }).join('');
+    } else {
+      stripEl.innerHTML = '';
+    }
+
+    content.style.display = 'block';
+    void content.offsetWidth;
+    content.classList.add('show');
+
+    burst.style.background = `radial-gradient(circle, color-mix(in srgb, ${r.color} 40%, transparent), transparent 65%)`;
+    burst.classList.remove('flash');
+    void burst.offsetWidth;
+    burst.classList.add('flash');
+  }, chargeMs);
 }
 document.getElementById('revealCloseBtn').addEventListener('click', ()=> revealOverlay.style.display = 'none');
 
@@ -1181,16 +1270,21 @@ function updateShopCountdown(){
   el.textContent = `Restocks in ${h}h ${m}m`;
 }
 
+const RARITY_ORDER = RARITIES.map(r=>r.key);
 function renderInventory(){
-  const items = inventory.filter(i=>i.category === currentInvCat);
+  const items = inventory
+    .filter(i=>i.category === currentInvCat)
+    .slice()
+    .sort((a,b)=> RARITY_ORDER.indexOf(b.rarity) - RARITY_ORDER.indexOf(a.rarity) || a.item_name.localeCompare(b.item_name));
   const list = document.getElementById('invList');
   if(items.length === 0){ list.innerHTML = `<div class="empty-note">Nothing bound in this category yet. Try the Gacha tab.</div>`; return; }
   list.innerHTML = items.map(i=>{
     const r = RARITY_BY_KEY[i.rarity];
     const isEquipped = player['equipped_'+i.category] === i.item_name;
-    return `<div class="item-row">
+    const highTier = i.rarity === 'legendary' || i.rarity === 'special_grade';
+    return `<div class="item-row" style="border-left:3px solid ${r.color}; background:color-mix(in srgb, ${r.color} ${highTier?10:5}%, var(--surface-2)); ${highTier?`box-shadow:0 0 10px color-mix(in srgb, ${r.color} 35%, transparent);`:''}">
       <div class="item-name-wrap">
-        <span class="item-rarity-tag" style="background:${r.color}22; color:${r.color}; border:1px solid ${r.color}55;">${r.label}</span>
+        <span class="item-rarity-tag" style="background:color-mix(in srgb, ${r.color} 18%, transparent); color:${r.color}; border:1px solid color-mix(in srgb, ${r.color} 45%, transparent);">${r.label}</span>
         <span>${i.item_name}</span>
       </div>
       <button class="btn ${isEquipped?'secondary':''}" style="width:auto; padding:6px 12px; font-size:12px;" data-equip-name="${encodeURIComponent(i.item_name)}" data-equip-cat="${i.category}" data-equip-rarity="${i.rarity}" ${isEquipped?'disabled':''}>
@@ -1217,6 +1311,25 @@ function buildSkillsFromEquip(){
     }
   });
   return skills;
+}
+
+function battleImpact(side, dmg, isCrit){
+  const card = document.querySelector('#battleOverlay .battle-card');
+  if(card){ card.classList.remove('shake'); void card.offsetWidth; card.classList.add(isCrit ? 'shake' : 'shake'); }
+  const barId = side === 'enemy' ? 'battleEnemyHpBar' : 'battlePlayerHpBar';
+  const bar = document.getElementById(barId);
+  const wrap = bar ? bar.parentElement : null;
+  const row = wrap ? wrap.parentElement : null;
+  if(wrap){
+    wrap.classList.remove('flash'); void wrap.offsetWidth; wrap.classList.add('flash');
+  }
+  if(row){
+    const pop = document.createElement('div');
+    pop.className = `dmg-pop ${side==='enemy'?'enemy-dmg':'player-dmg'} ${isCrit?'crit':''}`;
+    pop.textContent = (isCrit ? 'CRIT ' : '-') + dmg.toLocaleString();
+    row.appendChild(pop);
+    setTimeout(()=> pop.remove(), 750);
+  }
 }
 
 function startBattle(enemyDef){
@@ -1256,6 +1369,7 @@ function battleAction(actionKey){
   if(Math.random() < 0.15){ dmg = Math.round(dmg * 1.5); isCrit = true; }
   battleState.enemyHp = Math.max(0, battleState.enemyHp - dmg);
   battleState.log.push(isCrit ? `You used ${label} for a CRITICAL ${dmg.toLocaleString()} damage!` : `You used ${label} for ${dmg.toLocaleString()} damage.`);
+  battleImpact('enemy', dmg, isCrit);
   battleState.skills.forEach(s=>{ if(s.key !== actionKey && s.remaining > 0) s.remaining--; });
 
   if(battleState.enemyHp <= 0){
@@ -1277,10 +1391,12 @@ function battleAction(actionKey){
       for(let i=0;i<2;i++){ total += Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3))); }
       battleState.playerHp = Math.max(0, battleState.playerHp - total);
       battleState.log.push(`${battleState.enemyName} enters a frenzy, striking twice for ${total.toLocaleString()} total damage!`);
+      battleImpact('player', total, false);
     } else {
       const edmg = Math.max(1, Math.round(battleState.enemyAtk * 2.4));
       battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
       battleState.log.push(`${battleState.enemyName} unleashes a devastating attack for ${edmg.toLocaleString()} damage!`);
+      battleImpact('player', edmg, true);
     }
   } else if(battleState.isBoss && battleState.turnCount % 4 === 0){
     battleState.charging = true;
@@ -1292,6 +1408,7 @@ function battleAction(actionKey){
     const edmg = Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3)));
     battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
     battleState.log.push(`${battleState.enemyName} attacks you for ${edmg.toLocaleString()} damage.`);
+    battleImpact('player', edmg, false);
   }
 
   if(battleState.playerHp <= 0){
