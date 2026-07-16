@@ -9,20 +9,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
-    --void:#0a0a10;
-    --surface:#121220;
-    --surface-2:#191930;
-    --border:#2a2a45;
-    --purple:#7b2ff7;
-    --purple-dim:#4d1f99;
-    --blood:#e0293f;
-    --text:#eae8f5;
-    --text-muted:#8d8aa8;
-    --common:#9CA3AF;
-    --rare:#4c9eff;
-    --epic:#b24cff;
-    --legendary:#ffb84c;
-    --special:#ff4c5e;
+    --void:#0a0a10; --surface:#121220; --surface-2:#191930; --border:#2a2a45;
+    --purple:#7b2ff7; --purple-dim:#4d1f99; --blood:#e0293f;
+    --text:#eae8f5; --text-muted:#8d8aa8;
+    --common:#9CA3AF; --rare:#4c9eff; --epic:#b24cff; --legendary:#ffb84c; --special:#ff4c5e;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -31,10 +21,7 @@
       radial-gradient(circle at 15% 10%, rgba(123,47,247,0.10), transparent 40%),
       radial-gradient(circle at 85% 90%, rgba(224,41,63,0.08), transparent 45%),
       var(--void);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    background-attachment:fixed;
+    color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; background-attachment:fixed;
   }
   .mono{font-family:'JetBrains Mono',monospace;}
   h1,h2,h3,.display{font-family:'Cinzel',serif; letter-spacing:0.03em;}
@@ -44,17 +31,11 @@
 
   .curse-mark{
     position:absolute; inset:0; pointer-events:none; opacity:0.35;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size:42px 42px;
-    mask-image: radial-gradient(circle at center, black, transparent 75%);
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:42px 42px; mask-image: radial-gradient(circle at center, black, transparent 75%);
   }
-
   .seal-frame{
-    position:relative;
-    background:var(--surface);
-    border:1px solid var(--border);
+    position:relative; background:var(--surface); border:1px solid var(--border);
     clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
   }
 
@@ -63,10 +44,7 @@
   .auth-sub{text-align:center; color:var(--text-muted); font-size:13px; margin:0 0 26px;}
   .field{margin-bottom:14px;}
   .field label{display:block; font-size:12px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;}
-  .field input{
-    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
-    padding:11px 12px; border-radius:4px; font-size:14px; font-family:'Inter',sans-serif;
-  }
+  .field input{width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:11px 12px; border-radius:4px; font-size:14px; font-family:'Inter',sans-serif;}
   .field input:focus{outline:none; border-color:var(--purple);}
   .btn{
     display:inline-flex; align-items:center; justify-content:center; gap:8px;
@@ -123,17 +101,11 @@
   .action-card.locked-card{opacity:0.45;}
   .cooldown-note{font-size:11px; color:var(--text-muted); margin-top:8px;}
 
-  .float-gain{
-    position:fixed; pointer-events:none; font-family:'JetBrains Mono',monospace; font-weight:700;
-    color:var(--purple); font-size:14px; z-index:999; animation:floatUp 1s ease-out forwards;
-  }
+  .float-gain{position:fixed; pointer-events:none; font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--purple); font-size:14px; z-index:999; animation:floatUp 1s ease-out forwards;}
   @keyframes floatUp{ to{ transform:translateY(-40px); opacity:0; } }
 
   .banner-select{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
-  .banner-btn{
-    flex:1; min-width:100px; padding:10px; text-align:center; background:var(--surface-2); border:1px solid var(--border);
-    color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; border-radius:4px;
-  }
+  .banner-btn{flex:1; min-width:100px; padding:10px; text-align:center; background:var(--surface-2); border:1px solid var(--border); color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; border-radius:4px;}
   .banner-btn.active{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.18);}
   .roll-cost{font-size:12px; color:var(--text-muted); text-align:center; margin-bottom:14px;}
   .roll-buttons{display:flex; gap:10px;}
@@ -141,9 +113,9 @@
   .rarity-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);}
   .rarity-dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:8px;}
 
-  .reveal-overlay{
+  .reveal-overlay, .battle-overlay{
     position:fixed; inset:0; background:rgba(6,6,12,0.88); display:none; align-items:center; justify-content:center;
-    z-index:1000; backdrop-filter:blur(3px);
+    z-index:1000; backdrop-filter:blur(3px); padding:16px;
   }
   .reveal-card{
     width:280px; padding:34px 22px; text-align:center; background:var(--surface); border:1px solid var(--border);
@@ -155,14 +127,27 @@
   .reveal-name{font-family:'Cinzel',serif; font-size:20px; margin:0 0 8px;}
   .reveal-cat{font-size:12px; color:var(--text-muted); margin-bottom:18px; text-transform:capitalize;}
 
+  .battle-card{
+    width:380px; max-width:100%; padding:26px 22px; background:var(--surface); border:1px solid var(--border);
+    clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+    animation:revealPop .3s cubic-bezier(.2,1.4,.4,1);
+  }
+  .battle-hp-row{margin-bottom:14px;}
+  .battle-name-row{display:flex; justify-content:space-between; font-size:12px; font-weight:600; margin-bottom:4px;}
+  .battle-hp-bar-wrap{background:var(--surface-2); border-radius:6px; height:12px; overflow:hidden; border:1px solid var(--border);}
+  .battle-hp-bar{height:100%; transition:width .25s ease;}
+  .battle-hp-bar.enemy{background:linear-gradient(90deg,#7a1420,var(--blood));}
+  .battle-hp-bar.player{background:linear-gradient(90deg,var(--purple-dim),var(--purple));}
+  .battle-log{height:110px; overflow-y:auto; background:var(--surface-2); border:1px solid var(--border); border-radius:5px; padding:8px 10px; font-size:11px; color:var(--text-muted); margin:14px 0; display:flex; flex-direction:column; gap:3px;}
+  .battle-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .battle-actions .btn{font-size:12px; padding:10px 6px;}
+  .battle-retreat{margin-top:10px;}
+
   .inv-tabs{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
   .inv-tab{padding:6px 12px; font-size:12px; border:1px solid var(--border); border-radius:4px; color:var(--text-muted); cursor:pointer;}
   .inv-tab.active{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.18);}
   .item-list{display:flex; flex-direction:column; gap:8px;}
-  .item-row{
-    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px;
-    background:var(--surface-2); border:1px solid var(--border); border-radius:5px; font-size:13px;
-  }
+  .item-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:5px; font-size:13px;}
   .item-name-wrap{display:flex; align-items:center; gap:10px;}
   .item-rarity-tag{font-size:10px; text-transform:uppercase; font-weight:700; padding:2px 7px; border-radius:3px;}
   .empty-note{color:var(--text-muted); font-size:13px; text-align:center; padding:30px 0;}
@@ -176,13 +161,13 @@
   .stat-line:last-child{border-bottom:none;}
 
   .arc-badges{display:flex; gap:8px; flex-wrap:wrap;}
-  .arc-badge{ padding:8px 12px; border-radius:4px; font-size:11px; font-weight:600; border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); white-space:nowrap;}
+  .arc-badge{padding:8px 12px; border-radius:4px; font-size:11px; font-weight:600; border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); white-space:nowrap;}
   .arc-badge.cleared{color:var(--legendary); border-color:var(--legendary);}
   .arc-badge.current{color:#fff; border-color:var(--purple); background:rgba(123,47,247,0.2);}
   .arc-badge.locked{opacity:0.45;}
 
   .stage-list{display:flex; flex-direction:column; gap:8px;}
-  .stage-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:5px;}
+  .stage-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:var(--surface-2); border:1px solid var(--border); border-radius:5px;}
   .stage-row.cleared{opacity:0.55;}
   .stage-row.current{border-color:var(--purple); box-shadow:0 0 0 1px rgba(123,47,247,0.35);}
   .stage-row.locked{opacity:0.35;}
@@ -196,34 +181,26 @@
   .wager-row{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
   .wager-row .btn{width:auto; flex:1; min-width:110px;}
 
-  .toast{
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border);
-    padding:10px 18px; border-radius:6px; font-size:13px; z-index:1100; opacity:0; transition:opacity .3s; max-width:90vw; text-align:center;
-  }
+  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border); padding:10px 18px; border-radius:6px; font-size:13px; z-index:1100; opacity:0; transition:opacity .3s; max-width:90vw; text-align:center;}
   .toast.show{opacity:1;}
 </style>
 </head>
 <body>
 
-<!-- ================= AUTH SCREEN ================= -->
 <div id="authScreen">
   <div class="seal-frame auth-card">
     <div class="curse-mark"></div>
     <h1 class="auth-title">Sorcerer Incremental</h1>
     <p class="auth-sub">Train. Bind curses. Ascend the grades.</p>
-
     <div class="field"><label>Email</label><input type="email" id="authEmail" autocomplete="email" placeholder="you@example.com" /></div>
     <div class="field"><label>Password</label><input type="password" id="authPassword" autocomplete="current-password" placeholder="••••••••" /></div>
-
     <button class="btn" id="authSubmitBtn">Enter the Curtain</button>
     <div class="auth-error" id="authError"></div>
     <div class="auth-toggle"><span id="authToggleText">New sorcerer?</span> <a id="authToggleLink">Create an account</a></div>
   </div>
 </div>
 
-<!-- ================= GAME SCREEN ================= -->
 <div id="gameScreen">
-
   <div class="seal-frame topbar">
     <div class="curse-mark"></div>
     <div>
@@ -247,7 +224,6 @@
     <div class="tab-btn" data-tab="stats">Stats</div>
   </div>
 
-  <!-- TRAIN TAB -->
   <div class="tab-panel active" id="tab-train">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
@@ -255,7 +231,6 @@
       <p class="sub">Grow your cursed energy output through training and fieldwork.</p>
       <div class="xp-bar-wrap"><div class="xp-bar" id="xpBar" style="width:0%"></div></div>
       <div class="xp-label"><span id="xpText">0 / 50 EXP</span><span id="multText">×1.00 total power</span></div>
-
       <div class="train-grid">
         <div class="seal-frame action-card">
           <div class="curse-mark"></div>
@@ -269,7 +244,7 @@
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Activities</h2>
-      <p class="sub">Start an activity, wait for it to complete, and it pays out automatically. Higher-tier activities unlock as you rank up.</p>
+      <p class="sub">Only one activity can run at a time. Longer activities pay far better per second — pick your commitment.</p>
       <div class="train-grid" id="activityList"></div>
     </div>
 
@@ -281,17 +256,15 @@
     </div>
   </div>
 
-  <!-- MISSIONS TAB -->
   <div class="tab-panel" id="tab-missions">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Missions</h2>
-      <p class="sub">Hunt curses, take assignments from Jujutsu High, and answer contracts from the higher-ups. Each mission pays out instantly and starts its own cooldown.</p>
+      <p class="sub">Hunt curses, take assignments from Jujutsu High, and answer contracts from the higher-ups. Combat missions open a battle; losing costs nothing but time.</p>
       <div class="train-grid" id="missionList"></div>
     </div>
   </div>
 
-  <!-- STORY TAB -->
   <div class="tab-panel" id="tab-story">
     <div class="inv-tabs" id="storySubTabs">
       <div class="inv-tab active" data-sub="main">Main Story</div>
@@ -326,7 +299,7 @@
         <p class="sub">An endless colony ladder. Each win raises your Colony Rank and the strength of the next rival.</p>
         <div class="stat-line"><span>Colony Rank</span><span class="mono" id="cullingRank">0</span></div>
         <div class="stat-line"><span>Next Rival</span><span class="mono" id="cullingOpponent">—</span></div>
-        <div class="stat-line"><span>Your Power / Required</span><span class="mono" id="cullingReq">0 / 0</span></div>
+        <div class="stat-line"><span>Your Power</span><span class="mono" id="cullingReq">0</span></div>
         <button class="btn blood" id="cullingChallengeBtn" style="margin-top:14px;">Challenge Rival</button>
       </div>
     </div>
@@ -348,7 +321,6 @@
     </div>
   </div>
 
-  <!-- GACHA TAB -->
   <div class="tab-panel" id="tab-gacha">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
@@ -364,7 +336,6 @@
     </div>
   </div>
 
-  <!-- SHOP TAB -->
   <div class="tab-panel" id="tab-shop">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
@@ -379,18 +350,16 @@
     </div>
   </div>
 
-  <!-- INVENTORY TAB -->
   <div class="tab-panel" id="tab-inventory">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Inventory</h2>
-      <p class="sub">Everything you've bound. Equip one of each category to gain its passive bonus.</p>
+      <p class="sub">Everything you've bound. Equip one of each category to gain its passive bonus — Techniques, Companions, and Cursed Tools also become battle skills.</p>
       <div class="inv-tabs" id="invTabs"></div>
       <div class="item-list" id="invList"></div>
     </div>
   </div>
 
-  <!-- STATS TAB -->
   <div class="tab-panel" id="tab-stats">
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
@@ -406,6 +375,7 @@
       <div class="stat-line"><span>Story progress</span><span class="mono" id="statStory">0 / 0</span></div>
       <div class="stat-line"><span>Cursed Energy multiplier</span><span class="mono" id="statMult">×1.00</span></div>
       <div class="stat-line"><span>Battle power</span><span class="mono" id="statPower">0</span></div>
+      <div class="stat-line"><span>Max HP / Attack</span><span class="mono" id="statCombat">0 / 0</span></div>
       <div id="invCountStats"></div>
     </div>
     <div class="seal-frame panel">
@@ -415,7 +385,6 @@
       <div class="item-list" id="upgradeList"></div>
     </div>
   </div>
-
 </div>
 
 <div class="reveal-overlay" id="revealOverlay">
@@ -428,12 +397,28 @@
   </div>
 </div>
 
+<div class="battle-overlay" id="battleOverlay">
+  <div class="seal-frame battle-card">
+    <div class="curse-mark"></div>
+    <div class="battle-hp-row">
+      <div class="battle-name-row"><span id="battleEnemyName">Enemy</span><span class="mono" id="battleEnemyHpText">0 / 0</span></div>
+      <div class="battle-hp-bar-wrap"><div class="battle-hp-bar enemy" id="battleEnemyHpBar" style="width:100%"></div></div>
+    </div>
+    <div class="battle-hp-row">
+      <div class="battle-name-row"><span>You</span><span class="mono" id="battlePlayerHpText">0 / 0</span></div>
+      <div class="battle-hp-bar-wrap"><div class="battle-hp-bar player" id="battlePlayerHpBar" style="width:100%"></div></div>
+    </div>
+    <div class="battle-log" id="battleLog"></div>
+    <div class="battle-actions" id="battleActions"></div>
+    <button class="btn secondary battle-retreat" id="battleRetreatBtn">Retreat</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const SUPABASE_URL = "https://cbtkbkfuwbnggnjodnce.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNidGtia2Z1d2JuZ2duam9kbmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMDUzODMsImV4cCI6MjA5OTY4MTM4M30.rhWkT2ZqjEBvcrn8hEtNflB-arUmuZ9gWmLCPBoot5o";
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const RARITIES = [
@@ -446,6 +431,11 @@ const RARITIES = [
 const RARITY_BY_KEY = Object.fromEntries(RARITIES.map(r=>[r.key,r]));
 const TOTAL_WEIGHT = RARITIES.reduce((s,r)=>s+r.weight,0);
 
+const RARITY_SKILL_STATS = {
+  common:{mult:1.4, cooldown:2}, rare:{mult:1.7, cooldown:2}, epic:{mult:2.1, cooldown:3},
+  legendary:{mult:2.6, cooldown:3}, special_grade:{mult:3.2, cooldown:4},
+};
+
 const CATEGORY_META = [
   { key:'technique', label:'Cursed Techniques' },
   { key:'clan',       label:'Clans' },
@@ -453,6 +443,7 @@ const CATEGORY_META = [
   { key:'tool',        label:'Cursed Tools' },
   { key:'trait',       label:'CE Traits' },
 ];
+const SKILL_CATEGORIES = ['technique','companion','tool'];
 
 const POOLS = {
   technique: {
@@ -496,12 +487,15 @@ const GRADES = ['Grade 4','Grade 3','Grade 2','Grade 1','Semi-Special Grade','Sp
 const REBIRTH_LEVEL = 60;
 
 const UPGRADE_DEFS = [
-  { key:'strength',  name:'Strength',            icon:'💪', desc:'Increases battle power.' },
-  { key:'technique', name:'Cursed Technique',     icon:'🌀', desc:'Increases battle power and Cursed Energy gain.' },
-  { key:'energy',     name:'Cursed Energy Control',icon:'🔮', desc:'Increases Cursed Energy gain from all sources.' },
-  { key:'stamina',    name:'Stamina',              icon:'🫁', desc:'Increases rewards from Activities and Missions.' },
-  { key:'speed',       name:'Speed',                icon:'⚡', desc:'Reduces Activity and Mission cooldowns.' },
-  { key:'insight',     name:'Domain Insight',       icon:'👁️', desc:'Increases Domain Ticket gain from Missions.' },
+  { key:'tapPower',  name:'Tap Power',            icon:'👊', desc:'Increases Cursed Energy gained per Train tap.' },
+  { key:'autoTrain', name:'Auto-Trainer',          icon:'🤖', desc:'Passively trains for you every second, even while away.' },
+  { key:'critical',   name:'Critical Insight',      icon:'✨', desc:'Chance for double Cursed Energy on a Train tap.' },
+  { key:'strength',    name:'Strength',              icon:'💪', desc:'Increases battle attack power.' },
+  { key:'technique',    name:'Cursed Technique',      icon:'🌀', desc:'Increases battle power and Cursed Energy gain.' },
+  { key:'energy',        name:'Cursed Energy Control',icon:'🔮', desc:'Increases Cursed Energy gain from all sources.' },
+  { key:'stamina',        name:'Stamina',              icon:'🫁', desc:'Increases max HP in battle and rewards from Activities/Missions.' },
+  { key:'speed',           name:'Speed',                icon:'⚡', desc:'Reduces Activity and Mission cooldowns.' },
+  { key:'insight',          name:'Domain Insight',       icon:'👁️', desc:'Increases Domain Ticket gain from Missions.' },
 ];
 
 const ACTIVITY_DEFS = [
@@ -515,10 +509,10 @@ const ACTIVITY_DEFS = [
 ];
 
 const MISSION_DEFS = [
-  { key:'hunt',        name:'Hunt Curses',              desc:'Track down and exorcise a wandering curse.',        unlockGrade:0, cooldown:30,  rewardCE:60,  rewardTickets:[0,1] },
-  { key:'assignment',   name:'Jujutsu High Assignment', desc:'Complete a task assigned by faculty.',                unlockGrade:1, cooldown:90,  rewardCE:180, rewardTickets:[1,2] },
-  { key:'civilians',     name:'Save Civilians',          desc:'Respond to a curse manifestation endangering civilians.', unlockGrade:2, cooldown:150, rewardCE:340, rewardTickets:[1,2] },
-  { key:'contract',       name:'Higher-Up Contract',      desc:'Take on a high-priority contract from the higher-ups.', unlockGrade:4, cooldown:300, rewardCE:700, rewardTickets:[2,4] },
+  { key:'hunt',        name:'Hunt Curses',              desc:'Track down and exorcise a wandering curse.',        unlockGrade:0, cooldown:30,  rewardCE:60,  rewardTickets:[0,1], combat:true,  enemyName:'Wandering Curse' },
+  { key:'assignment',   name:'Jujutsu High Assignment', desc:'Complete a task assigned by faculty.',                unlockGrade:1, cooldown:90,  rewardCE:180, rewardTickets:[1,2], combat:false },
+  { key:'civilians',     name:'Save Civilians',          desc:'Respond to a curse manifestation endangering civilians.', unlockGrade:2, cooldown:150, rewardCE:340, rewardTickets:[1,2], combat:true, enemyName:'Curse Threatening Civilians' },
+  { key:'contract',       name:'Higher-Up Contract',      desc:'Take on a high-priority contract from the higher-ups.', unlockGrade:4, cooldown:300, rewardCE:700, rewardTickets:[2,4], combat:false },
 ];
 
 const SHOP_POOL = [
@@ -586,6 +580,7 @@ let currentBanner = 'technique';
 let currentInvCat = 'technique';
 let autosaveTimer = null;
 let tickTimer = null;
+let battleState = null;
 
 let authMode = 'signin';
 const authToggleText = document.getElementById('authToggleText');
@@ -722,6 +717,8 @@ function totalMult(){ return (1 + equipBonus()) * rebirthMult() * ceMult(); }
 function powerScore(){ return Math.round(player.level * 12 * (1 + equipBonus()) * rebirthMult() * battleMult()); }
 function expToNext(){ return 50 + (player.level-1) * 35; }
 function storyProgress(){ return player.story_progress || 0; }
+function playerMaxHP(){ return Math.round((100 + player.level*18) * (1 + upg('stamina')*0.03)); }
+function playerAttackDamage(){ return Math.max(5, Math.round(powerScore()/6)); }
 
 function gainExpAndLevel(exp){
   player.exp += exp;
@@ -768,16 +765,19 @@ function initDynamicUI(){
   });
 
   document.getElementById('cullingChallengeBtn').addEventListener('click', challengeColony);
+  document.getElementById('battleRetreatBtn').addEventListener('click', ()=> endBattle(false, true));
 }
 
 document.getElementById('trainBtn').addEventListener('click', (e)=>{
   const base = 10 + player.level * 3;
   const variance = 0.9 + Math.random()*0.2;
-  const gain = Math.round(base * totalMult() * variance);
+  let gain = Math.round(base * totalMult() * variance * (1 + upg('tapPower')*0.06));
+  let isCrit = false;
+  if(Math.random() < Math.min(0.5, upg('critical')*0.03)){ gain = Math.round(gain*2); isCrit = true; }
   const exp = 8 + Math.floor(player.level/5);
   player.currency += gain;
   gainExpAndLevel(exp);
-  floatText(e.clientX, e.clientY, `+${gain} CE`);
+  floatText(e.clientX, e.clientY, isCrit ? `CRIT +${gain.toLocaleString()} CE!` : `+${gain.toLocaleString()} CE`);
   renderAll();
 });
 
@@ -789,13 +789,22 @@ document.getElementById('rebirthBtn').addEventListener('click', async ()=>{
   showToast('You have reincarnated. Power multiplier increased.');
 });
 
+function checkAutoTrain(){
+  const lvl = upg('autoTrain');
+  if(lvl<=0) return;
+  const base = 10 + player.level*3;
+  const gain = Math.round(base * totalMult() * 0.15 * lvl);
+  if(gain>0) player.currency += gain;
+}
+
 function activityDuration(def){ return Math.round(def.duration*1000*speedMult()); }
 function activityReward(def){ return Math.round(def.reward*(1+player.level*0.04)*totalMult()*rewardMult()); }
+function anyActivityRunning(){ return ACTIVITY_DEFS.some(def => player.activities[def.key] && player.activities[def.key].startedAt); }
 
 async function startActivity(key){
   const def = ACTIVITY_DEFS.find(d=>d.key===key);
   if(gradeIndex() < def.unlockGrade) return;
-  if(player.activities[key] && player.activities[key].startedAt) return;
+  if(anyActivityRunning()){ showToast('Finish your current training before starting another.'); return; }
   player.activities[key] = { startedAt: new Date().toISOString() };
   renderActivities();
   await savePlayer();
@@ -822,6 +831,7 @@ function checkActivities(){
 
 function renderActivities(){
   const el = document.getElementById('activityList');
+  const busy = anyActivityRunning();
   el.innerHTML = ACTIVITY_DEFS.map(def=>{
     const locked = gradeIndex() < def.unlockGrade;
     const st = player.activities[def.key];
@@ -834,6 +844,8 @@ function renderActivities(){
       const pct = Math.min(100, (elapsed/activityDuration(def))*100);
       const remain = Math.max(0, Math.ceil((activityDuration(def)-elapsed)/1000));
       inner = `<div class="xp-bar-wrap"><div class="xp-bar" style="width:${pct}%"></div></div><div class="cooldown-note">${remain}s remaining</div>`;
+    } else if(busy){
+      inner = `<div class="cooldown-note">Training in progress elsewhere...</div>`;
     } else {
       inner = `<button class="btn" data-start-activity="${def.key}">Start (+${activityReward(def).toLocaleString()} CE)</button>`;
     }
@@ -860,14 +872,20 @@ async function embarkMission(key){
   const def = MISSION_DEFS.find(d=>d.key===key);
   if(gradeIndex() < def.unlockGrade) return;
   if(missionRemaining(def) > 0) return;
-  const ceGain = Math.round(def.rewardCE * totalMult() * rewardMult());
-  let tickets = def.rewardTickets[0] + Math.floor(Math.random()*(def.rewardTickets[1]-def.rewardTickets[0]+1));
-  if(Math.random() < ticketBonusChance()) tickets += 1;
-  player.currency += ceGain; player.tickets += tickets;
-  gainExpAndLevel(Math.round(def.rewardCE*0.15));
-  player.missions[key] = { lastAt: new Date().toISOString() };
-  showToast(`${def.name} complete: +${ceGain.toLocaleString()} CE, +${tickets} tickets.`);
-  renderAll(); await savePlayer();
+  if(def.combat){
+    const enemyHp = Math.max(20, Math.round(def.rewardCE * 3));
+    const enemyAtk = Math.max(3, Math.round(def.rewardCE * 0.12));
+    startBattle({ name: def.enemyName, hp: enemyHp, atk: enemyAtk, isBoss:false, meta:{ type:'mission', def } });
+  } else {
+    const ceGain = Math.round(def.rewardCE * totalMult() * rewardMult());
+    let tickets = def.rewardTickets[0] + Math.floor(Math.random()*(def.rewardTickets[1]-def.rewardTickets[0]+1));
+    if(Math.random() < ticketBonusChance()) tickets += 1;
+    player.currency += ceGain; player.tickets += tickets;
+    gainExpAndLevel(Math.round(def.rewardCE*0.15));
+    player.missions[key] = { lastAt: new Date().toISOString() };
+    showToast(`${def.name} complete: +${ceGain.toLocaleString()} CE, +${tickets} tickets.`);
+    renderAll(); await savePlayer();
+  }
 }
 function renderMissionsTab(){
   const el = document.getElementById('missionList');
@@ -877,7 +895,7 @@ function renderMissionsTab(){
     let action;
     if(locked) action = `<div class="cooldown-note">Unlocks at ${GRADES[def.unlockGrade]}</div>`;
     else if(rem>0) action = `<div class="cooldown-note">Ready in ${Math.ceil(rem/1000)}s</div>`;
-    else action = `<button class="btn" data-mission="${def.key}">Embark</button>`;
+    else action = `<button class="btn" data-mission="${def.key}">${def.combat ? 'Engage' : 'Embark'}</button>`;
     return `<div class="seal-frame action-card ${locked?'locked-card':''}">
       <div class="curse-mark"></div>
       <h3>${def.name}</h3>
@@ -1073,23 +1091,140 @@ function renderInventory(){
   });
 }
 
-async function engageStage(stage){
-  if(storyProgress() !== stage.globalIndex) return;
-  if(powerScore() < stage.requiredPower){
-    showToast(`Not strong enough yet. Power ${powerScore().toLocaleString()} / ${stage.requiredPower.toLocaleString()} required.`);
+function buildSkillsFromEquip(){
+  const skills = [];
+  SKILL_CATEGORIES.forEach(cat=>{
+    const name = player['equipped_'+cat];
+    const rarity = player['equipped_'+cat+'_rarity'];
+    if(name && rarity && RARITY_SKILL_STATS[rarity]){
+      const st = RARITY_SKILL_STATS[rarity];
+      skills.push({ key:cat, name, mult:st.mult, cooldown:st.cooldown, remaining:0 });
+    }
+  });
+  return skills;
+}
+
+function startBattle(enemyDef){
+  battleState = {
+    enemyName: enemyDef.name,
+    enemyMaxHp: enemyDef.hp,
+    enemyHp: enemyDef.hp,
+    enemyAtk: enemyDef.atk,
+    isBoss: !!enemyDef.isBoss,
+    playerMaxHp: playerMaxHP(),
+    playerHp: playerMaxHP(),
+    skills: buildSkillsFromEquip(),
+    log: [`A battle begins against ${enemyDef.name}!`],
+    meta: enemyDef.meta || {},
+  };
+  document.getElementById('battleOverlay').style.display = 'flex';
+  renderBattle();
+}
+
+function battleAction(actionKey){
+  if(!battleState) return;
+  let dmg, label;
+  if(actionKey === 'attack'){
+    dmg = playerAttackDamage(); label = 'Attack';
+  } else {
+    const skill = battleState.skills.find(s=>s.key===actionKey);
+    if(!skill || skill.remaining > 0) return;
+    dmg = Math.round(playerAttackDamage() * skill.mult);
+    skill.remaining = skill.cooldown;
+    label = skill.name;
+  }
+  dmg = Math.max(1, Math.round(dmg * (0.85 + Math.random()*0.3)));
+  battleState.enemyHp = Math.max(0, battleState.enemyHp - dmg);
+  battleState.log.push(`You used ${label} for ${dmg.toLocaleString()} damage.`);
+  battleState.skills.forEach(s=>{ if(s.key !== actionKey && s.remaining > 0) s.remaining--; });
+
+  if(battleState.enemyHp <= 0){
+    battleState.log.push(`${battleState.enemyName} has been defeated!`);
+    renderBattle();
+    setTimeout(()=> endBattle(true), 500);
     return;
   }
-  player.currency += stage.rewardCE; player.tickets += stage.rewardTickets;
-  gainExpAndLevel(15 + stage.globalIndex * 2);
-  player.story_progress = stage.globalIndex + 1;
-  if(stage.isBoss){
-    const bonus = await bossBonusPull();
-    renderAll(); showReveal(bonus, `Arc Cleared: ${stage.arcName}`);
-  } else {
-    renderAll(); showToast(`Defeated ${stage.name}. +${stage.rewardCE.toLocaleString()} CE, +${stage.rewardTickets} tickets.`);
+
+  const edmg = Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3)));
+  battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
+  battleState.log.push(`${battleState.enemyName} attacks you for ${edmg.toLocaleString()} damage.`);
+  if(battleState.playerHp <= 0){
+    battleState.log.push(`You have been defeated. Retreating...`);
+    renderBattle();
+    setTimeout(()=> endBattle(false), 500);
+    return;
   }
-  await savePlayer();
+  renderBattle();
 }
+
+function renderBattle(){
+  if(!battleState) return;
+  const enemyPct = Math.max(0, (battleState.enemyHp/battleState.enemyMaxHp)*100);
+  const playerPct = Math.max(0, (battleState.playerHp/battleState.playerMaxHp)*100);
+  document.getElementById('battleEnemyName').textContent = battleState.enemyName + (battleState.isBoss ? ' ⚔' : '');
+  document.getElementById('battleEnemyHpText').textContent = `${Math.max(0,battleState.enemyHp).toLocaleString()} / ${battleState.enemyMaxHp.toLocaleString()}`;
+  document.getElementById('battleEnemyHpBar').style.width = enemyPct + '%';
+  document.getElementById('battlePlayerHpText').textContent = `${Math.max(0,battleState.playerHp).toLocaleString()} / ${battleState.playerMaxHp.toLocaleString()}`;
+  document.getElementById('battlePlayerHpBar').style.width = playerPct + '%';
+  const logEl = document.getElementById('battleLog');
+  logEl.innerHTML = battleState.log.slice(-8).map(l=>`<div>${l}</div>`).join('');
+  logEl.scrollTop = logEl.scrollHeight;
+
+  const actionsEl = document.getElementById('battleActions');
+  let html = `<button class="btn" data-action="attack">Attack (${playerAttackDamage().toLocaleString()})</button>`;
+  battleState.skills.forEach(s=>{
+    const ready = s.remaining <= 0;
+    html += `<button class="btn ${ready?'':'secondary'}" data-action="${s.key}" ${ready?'':'disabled'}>${s.name}${ready?'':` (${s.remaining})`}</button>`;
+  });
+  actionsEl.innerHTML = html;
+  actionsEl.querySelectorAll('[data-action]').forEach(btn=>{
+    btn.addEventListener('click', ()=> battleAction(btn.dataset.action));
+  });
+}
+
+async function endBattle(won, retreated){
+  document.getElementById('battleOverlay').style.display = 'none';
+  const meta = battleState ? battleState.meta : {};
+  battleState = null;
+  if(won) await onBattleWin(meta);
+  else if(retreated) showToast('You retreated from the battle.');
+  else showToast('You were defeated. Train up and try again.');
+}
+
+async function onBattleWin(meta){
+  if(meta.type === 'story'){
+    const stage = meta.stage;
+    player.currency += stage.rewardCE; player.tickets += stage.rewardTickets;
+    gainExpAndLevel(15 + stage.globalIndex * 2);
+    player.story_progress = stage.globalIndex + 1;
+    if(stage.isBoss){
+      const bonus = await bossBonusPull();
+      renderAll(); showReveal(bonus, `Arc Cleared: ${stage.arcName}`);
+    } else {
+      renderAll(); showToast(`Defeated ${stage.name}. +${stage.rewardCE.toLocaleString()} CE, +${stage.rewardTickets} tickets.`);
+    }
+    await savePlayer();
+  } else if(meta.type === 'colony'){
+    const rewardCE = Math.round(meta.req * 0.4);
+    const rewardTickets = 1 + Math.floor(player.colony_rank/5);
+    player.currency += rewardCE; player.tickets += rewardTickets;
+    gainExpAndLevel(10 + player.colony_rank);
+    player.colony_rank += 1;
+    showToast(`Colony Rank ${player.colony_rank}! +${rewardCE.toLocaleString()} CE, +${rewardTickets} tickets.`);
+    renderAll(); await savePlayer();
+  } else if(meta.type === 'mission'){
+    const def = meta.def;
+    const ceGain = Math.round(def.rewardCE * totalMult() * rewardMult());
+    let tickets = def.rewardTickets[0] + Math.floor(Math.random()*(def.rewardTickets[1]-def.rewardTickets[0]+1));
+    if(Math.random() < ticketBonusChance()) tickets += 1;
+    player.currency += ceGain; player.tickets += tickets;
+    gainExpAndLevel(Math.round(def.rewardCE*0.15));
+    player.missions[def.key] = { lastAt: new Date().toISOString() };
+    showToast(`${def.name} complete: +${ceGain.toLocaleString()} CE, +${tickets} tickets.`);
+    renderAll(); await savePlayer();
+  }
+}
+
 async function bossBonusPull(){
   const bossRarities = [{key:'epic',weight:70},{key:'legendary',weight:25},{key:'special_grade',weight:5}];
   const totalW = bossRarities.reduce((s,r)=>s+r.weight,0);
@@ -1104,6 +1239,14 @@ async function bossBonusPull(){
   if(!error && data) inventory.unshift(data); else inventory.unshift(row);
   return { name, rarity, category };
 }
+
+function engageStage(stage){
+  if(storyProgress() !== stage.globalIndex) return;
+  const enemyHp = Math.max(20, Math.round(stage.requiredPower * 0.6));
+  const enemyAtk = Math.max(4, Math.round(stage.requiredPower * 0.045));
+  startBattle({ name: stage.name, hp: enemyHp, atk: enemyAtk, isBoss: stage.isBoss, meta:{ type:'story', stage } });
+}
+
 function renderStory(){
   const progress = storyProgress();
   const allCleared = progress >= FLAT_STAGES.length;
@@ -1130,15 +1273,14 @@ function renderStory(){
   document.getElementById('stageList').innerHTML = arcStages.map(s=>{
     let status = 'locked';
     if(s.globalIndex < progress) status = 'cleared'; else if(s.globalIndex === progress) status = 'current';
-    const canWin = status === 'current' && powerScore() >= s.requiredPower;
     return `<div class="stage-row ${status} ${s.isBoss?'boss':''}">
       <div class="stage-info">
         <div class="stage-name ${s.isBoss?'boss-name':''}">${s.isBoss ? '⚔ BOSS — ' : ''}${s.name}</div>
-        <div class="stage-power">Requires ${s.requiredPower.toLocaleString()} power · rewards ${s.rewardCE.toLocaleString()} CE, ${s.rewardTickets} tickets</div>
+        <div class="stage-power">Rewards ${s.rewardCE.toLocaleString()} CE, ${s.rewardTickets} tickets</div>
       </div>
       ${status === 'cleared' ? '<div class="stage-status win">Cleared</div>' : ''}
       ${status === 'locked' ? '<div class="stage-status">Locked</div>' : ''}
-      ${status === 'current' ? `<button class="btn ${canWin?'':'secondary'}" style="width:auto; padding:8px 14px;" data-engage="${s.globalIndex}">Engage</button>` : ''}
+      ${status === 'current' ? `<button class="btn" style="width:auto; padding:8px 14px;" data-engage="${s.globalIndex}">Engage</button>` : ''}
     </div>`;
   }).join('');
   document.querySelectorAll('[data-engage]').forEach(btn=>{
@@ -1146,23 +1288,16 @@ function renderStory(){
   });
 }
 
-async function challengeColony(){
+function challengeColony(){
   const req = colonyRequiredPower(player.colony_rank);
-  if(powerScore() < req){ showToast(`Not strong enough. Power ${powerScore().toLocaleString()} / ${req.toLocaleString()}`); return; }
-  const rewardCE = Math.round(req*0.4);
-  const rewardTickets = 1 + Math.floor(player.colony_rank/5);
-  player.currency += rewardCE; player.tickets += rewardTickets;
-  gainExpAndLevel(10 + player.colony_rank);
-  player.colony_rank += 1;
-  showToast(`Colony Rank ${player.colony_rank}! +${rewardCE.toLocaleString()} CE, +${rewardTickets} tickets.`);
-  renderAll(); await savePlayer();
+  const enemyHp = Math.max(20, Math.round(req * 0.6));
+  const enemyAtk = Math.max(4, Math.round(req * 0.045));
+  startBattle({ name: COLONY_OPPONENTS[player.colony_rank % COLONY_OPPONENTS.length], hp: enemyHp, atk: enemyAtk, isBoss:false, meta:{ type:'colony', req } });
 }
 function renderCulling(){
-  const req = colonyRequiredPower(player.colony_rank);
   document.getElementById('cullingRank').textContent = player.colony_rank;
   document.getElementById('cullingOpponent').textContent = COLONY_OPPONENTS[player.colony_rank % COLONY_OPPONENTS.length];
-  document.getElementById('cullingReq').textContent = `${powerScore().toLocaleString()} / ${req.toLocaleString()} power`;
-  document.getElementById('cullingChallengeBtn').disabled = powerScore() < req;
+  document.getElementById('cullingReq').textContent = powerScore().toLocaleString();
 }
 
 async function gambleFightClub(pct){
@@ -1223,6 +1358,7 @@ function renderStats(){
   document.getElementById('statStory').textContent = `${Math.min(storyProgress(),FLAT_STAGES.length)} / ${FLAT_STAGES.length} stages`;
   document.getElementById('statMult').textContent = '×' + totalMult().toFixed(2);
   document.getElementById('statPower').textContent = powerScore().toLocaleString();
+  document.getElementById('statCombat').textContent = `${playerMaxHP().toLocaleString()} / ${playerAttackDamage().toLocaleString()}`;
   document.getElementById('invCountStats').innerHTML = CATEGORY_META.map(c=>{
     const count = inventory.filter(i=>i.category===c.key).length;
     return `<div class="stat-line"><span>${c.label} bound</span><span class="mono">${count}</span></div>`;
@@ -1245,10 +1381,12 @@ function renderAll(){
 
 function tickLoop(){
   if(!player) return;
+  checkAutoTrain();
   checkActivities();
   renderActivities();
   renderMissionsTab();
   updateShopCountdown();
+  updateTopBar();
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn=>{
