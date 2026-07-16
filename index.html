@@ -159,7 +159,7 @@
   .battle-hp-bar.enemy{background:linear-gradient(90deg,#7a1420,var(--blood));}
   .battle-hp-bar.player{background:linear-gradient(90deg,var(--purple-dim),var(--purple));}
   .battle-log{height:110px; overflow-y:auto; background:var(--surface-2); border:1px solid var(--border); border-radius:5px; padding:8px 10px; font-size:11px; color:var(--text-muted); margin:14px 0; display:flex; flex-direction:column; gap:3px;}
-  .battle-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .battle-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; max-height:230px; overflow-y:auto; padding-right:2px;}
   .battle-actions .btn{font-size:12px; padding:10px 6px;}
   .battle-retreat{margin-top:10px;}
 
@@ -232,6 +232,89 @@
 
   .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--border); padding:10px 18px; border-radius:6px; font-size:13px; z-index:1100; opacity:0; transition:opacity .3s; max-width:90vw; text-align:center;}
   .toast.show{opacity:1;}
+
+  /* ---- Skill list / mastery tree ---- */
+  .skill-groups{display:flex; flex-direction:column; gap:14px; margin-top:16px;}
+  .skill-group-title{font-size:12px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin:0 0 8px; display:flex; align-items:center; gap:8px;}
+  .skill-group-title .g-line{flex:1; height:1px; background:var(--border);}
+  .skill-tree-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:5px; font-size:12px; margin-bottom:6px;}
+  .skill-tree-row.locked{opacity:0.4;}
+  .skill-tree-row.ultimate{border-color:var(--special); background:color-mix(in srgb, var(--special) 10%, var(--surface-2));}
+  .skill-tree-name{font-weight:600;}
+  .skill-tree-req{font-size:10px; color:var(--text-muted); text-transform:uppercase;}
+  .skill-tree-req.unlocked{color:var(--legendary);}
+
+  /* ---- Timing minigame overlay ---- */
+  .timing-overlay{
+    position:fixed; inset:0; background:rgba(6,6,12,0.92); display:none; align-items:center; justify-content:center;
+    z-index:1200; backdrop-filter:blur(3px); padding:16px; flex-direction:column;
+  }
+  .timing-card{width:320px; max-width:100%; text-align:center;}
+  .timing-skill-name{font-family:'Cinzel',serif; font-size:18px; margin:0 0 2px;}
+  .timing-stage-label{font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:18px;}
+  .timing-ring-wrap{position:relative; width:220px; height:220px; margin:0 auto 20px;}
+  .timing-ring-track{
+    position:absolute; inset:0; border-radius:50%;
+    -webkit-mask-image:radial-gradient(circle, transparent 0 66%, black 67% 100%);
+    mask-image:radial-gradient(circle, transparent 0 66%, black 67% 100%);
+  }
+  .timing-marker-wrap{position:absolute; inset:0;}
+  .timing-marker{
+    position:absolute; top:50%; left:50%; width:12px; height:12px; border-radius:50%; background:#fff;
+    box-shadow:0 0 10px 3px rgba(255,255,255,0.85); margin:-6px 0 0 -6px;
+  }
+  .timing-center-label{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;}
+  .timing-center-label .tc-desc{font-size:10px; color:var(--text-muted); max-width:120px;}
+  .timing-grade-pop{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Cinzel',serif;
+    font-weight:800; font-size:26px; opacity:0; pointer-events:none;
+  }
+  .timing-grade-pop.show{animation:gradePop .65s ease-out forwards;}
+  @keyframes gradePop{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.6);}
+    25%{opacity:1; transform:translate(-50%,-50%) scale(1.15);}
+    100%{opacity:0; transform:translate(-50%,-60%) scale(1);}
+  }
+  .timing-grade-pop.perfect{color:#fff; text-shadow:0 0 14px var(--legendary);}
+  .timing-grade-pop.good{color:var(--rare);}
+  .timing-grade-pop.miss{color:var(--blood);}
+  .timing-tap-btn{width:100%; margin-top:4px;}
+  .timing-dots{display:flex; gap:8px; justify-content:center; margin-top:14px;}
+  .timing-dot{width:9px; height:9px; border-radius:50%; background:var(--border); border:1px solid var(--border);}
+  .timing-dot.filled{background:var(--purple); border-color:var(--purple);}
+  .timing-dot.filled.perfect{background:var(--legendary); border-color:var(--legendary);}
+  .timing-dot.filled.miss{background:var(--blood); border-color:var(--blood);}
+  .ultimate-banner{
+    position:fixed; inset:0; z-index:1250; display:none; align-items:center; justify-content:center;
+    background:radial-gradient(circle, rgba(123,47,247,0.35), rgba(6,6,12,0.92));
+    flex-direction:column; text-align:center; padding:20px;
+  }
+  .ultimate-banner .ub-label{font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--special); margin-bottom:8px;}
+  .ultimate-banner .ub-name{font-family:'Cinzel',serif; font-size:30px; color:#fff; text-shadow:0 0 24px var(--purple); animation:ubPulse 1.1s ease-in-out;}
+  @keyframes ubPulse{
+    0%{opacity:0; transform:scale(0.8);}
+    30%{opacity:1; transform:scale(1.06);}
+    70%{opacity:1; transform:scale(1);}
+    100%{opacity:0; transform:scale(1.02);}
+  }
+  .black-flash-flash{position:fixed; inset:0; z-index:1150; pointer-events:none; background:#fff; opacity:0; display:block;}
+  .black-flash-flash.go{animation:blackFlashFlash .5s ease-out;}
+  @keyframes blackFlashFlash{
+    0%{opacity:0;}
+    12%{opacity:1;}
+    100%{opacity:0;}
+  }
+  .battle-card.blackflash{animation:blackFlashShake .5s ease;}
+  @keyframes blackFlashShake{
+    0%{transform:translate(0,0);}
+    15%{transform:translate(-6px,2px);}
+    30%{transform:translate(6px,-2px);}
+    45%{transform:translate(-5px,3px);}
+    60%{transform:translate(5px,-3px);}
+    75%{transform:translate(-3px,1px);}
+    100%{transform:translate(0,0);}
+  }
+  .dmg-pop.blackflash{color:#fff !important; text-shadow:0 0 10px var(--legendary), 0 0 20px var(--blood); font-size:24px;}
 </style>
 </head>
 <body>
@@ -405,7 +488,7 @@
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Inventory</h2>
-      <p class="sub">Everything you've bound. Equip one of each category to gain its passive bonus — Techniques, Companions, and Cursed Tools also become battle skills.</p>
+      <p class="sub">Everything you've bound. Equip one of each category to gain its passive bonus — Techniques, Companions, and Cursed Tools also unlock a tree of named battle skills as you raise their mastery.</p>
       <div class="inv-tabs" id="invTabs"></div>
       <div class="item-list" id="invList"></div>
     </div>
@@ -432,7 +515,7 @@
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
       <h2>Skill Ascension</h2>
-      <p class="sub">Permanently strengthen the battle skill tied to each equipped item slot — stronger multiplier, shorter cooldown.</p>
+      <p class="sub">Level up mastery to unlock stronger named skills for each equipped slot — up to a full Domain Expansion at Lv.10.</p>
       <div class="item-list" id="ascensionList"></div>
     </div>
     <div class="seal-frame panel">
@@ -512,6 +595,30 @@
   </div>
 </div>
 
+<div class="timing-overlay" id="timingOverlay">
+  <div class="seal-frame timing-card" style="padding:26px 22px;">
+    <div class="curse-mark"></div>
+    <div class="timing-skill-name" id="timingSkillName">Skill</div>
+    <div class="timing-stage-label" id="timingStageLabel">Tap when the marker hits the glowing zone</div>
+    <div class="timing-ring-wrap" id="timingRingWrap">
+      <div class="timing-ring-track" id="timingRingTrack"></div>
+      <div class="timing-marker-wrap"><div class="timing-marker" id="timingMarker"></div></div>
+      <div class="timing-center-label">
+        <div class="tc-desc" id="timingDesc"></div>
+      </div>
+      <div class="timing-grade-pop" id="timingGradePop"></div>
+    </div>
+    <div class="timing-dots" id="timingDots"></div>
+    <button class="btn timing-tap-btn" id="timingTapBtn">Tap!</button>
+  </div>
+</div>
+
+<div class="ultimate-banner" id="ultimateBanner">
+  <div class="ub-label">Domain Expansion</div>
+  <div class="ub-name" id="ultimateBannerName">Infinite Void</div>
+</div>
+<div class="black-flash-flash" id="blackFlashFlash"></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -590,6 +697,183 @@ const POOLS = {
 
 const GRADES = ['Grade 4','Grade 3','Grade 2','Grade 1','Semi-Special Grade','Special Grade'];
 const REBIRTH_LEVEL = 60;
+
+// ---- Battle skill system ----
+// Every sorcerer starts with these three, no equipment required.
+const STARTER_SKILLS = [
+  { key:'quickStrike', name:'Quick Strike', mult:1.3, cooldown:1, circles:1, difficulty:0.3,
+    desc:'A fast strike. Time the tap for bonus damage.' },
+  { key:'heavyBlow',    name:'Heavy Blow',    mult:2.0, cooldown:2, circles:2, difficulty:0.55,
+    desc:'A crushing two-hit combo. Land both perfectly to spike your Black Flash chance.' },
+  { key:'reinforcement', name:'Reinforcement', mult:1.15, cooldown:2, circles:1, difficulty:0.3, selfBuff:true,
+    desc:'Reinforce your body with cursed energy. A perfect hit also boosts your next attack.' },
+];
+
+// Curated mastery-unlock trees for the marquee legendary / special-grade items.
+// Each entry unlocks at the listed mastery (ascension) level for that slot.
+const ITEM_SKILL_TREES = {
+  // -- Techniques --
+  'Limitless: Infinity': [
+    { name:'Reversal Red', unlockLevel:1, mult:2.0, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Lapse Blue', unlockLevel:3, mult:1.9, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Hollow Purple', unlockLevel:6, mult:3.3, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Domain Expansion: Infinite Void', unlockLevel:10, mult:5.5, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Six Eyes + Limitless': [
+    { name:'Assisted Reversal Red', unlockLevel:1, mult:2.2, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Blue Collapse', unlockLevel:3, mult:2.6, cooldown:3, circles:1, difficulty:0.55 },
+    { name:'Hollow Purple: True', unlockLevel:6, mult:3.9, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Domain Expansion: Unlimited Void', unlockLevel:10, mult:6.5, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Ratio Technique': [
+    { name:'Cleave', unlockLevel:1, mult:1.9, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Dismantle', unlockLevel:3, mult:2.3, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'8:2 Divergent Fist', unlockLevel:6, mult:3.0, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Domain Expansion: Malevolent Shrine', unlockLevel:10, mult:5.8, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Malevolent Kitchen': [
+    { name:'Boogie Woogie Swap', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Curry Katana Strike', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Boogie Woogie Combo', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Domain Expansion: Course of Action', unlockLevel:10, mult:5.0, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Ten Shadows (Full)': [
+    { name:'Divine Dog Fangs', unlockLevel:1, mult:1.9, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Nue Strike', unlockLevel:3, mult:2.3, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Max Elephant Charge', unlockLevel:6, mult:3.0, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Domain Expansion: Chimera Shadow Garden', unlockLevel:10, mult:5.2, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Malevolent Shrine': [
+    { name:'Dismantle', unlockLevel:1, mult:2.0, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Cleave', unlockLevel:3, mult:2.4, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Fuga', unlockLevel:6, mult:3.1, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Domain Expansion: Malevolent Shrine', unlockLevel:10, mult:6.0, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Agito': [
+    { name:'Static Discharge', unlockLevel:1, mult:1.9, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Thunderclap Step', unlockLevel:3, mult:2.3, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Lightning Palm', unlockLevel:6, mult:3.0, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Overcharged Voltage Burst', unlockLevel:10, mult:5.0, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Disaster Flames': [
+    { name:'Ember Fist', unlockLevel:1, mult:1.9, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Magma Fissure', unlockLevel:3, mult:2.3, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Volcanic Eruption', unlockLevel:6, mult:3.0, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Domain Expansion: Coffin of the Iron Mountain', unlockLevel:10, mult:5.5, cooldown:8, circles:0, ultimate:true },
+  ],
+  // -- Cursed Tools --
+  'Playful Cloud': [
+    { name:'Extending Strike', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Spinning Assault', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Full Extension Combo', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Cloud-Splitting Finale', unlockLevel:10, mult:4.8, cooldown:7, circles:0, ultimate:true },
+  ],
+  'Split Soul Katana': [
+    { name:'Soul Slash', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Split Cut', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Twin Soul Barrage', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Severance of the Soul', unlockLevel:10, mult:4.8, cooldown:7, circles:0, ultimate:true },
+  ],
+  'Dismantle Fragment': [
+    { name:'Fragment Slash', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Shard Barrage', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Piercing Rend', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Full Dismantle Release', unlockLevel:10, mult:4.8, cooldown:7, circles:0, ultimate:true },
+  ],
+  'Hairpin (Kirara Style)': [
+    { name:'Feather Pin Strike', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Kirara Dive', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Aerial Barrage', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:"Kirara's Full Flight", unlockLevel:10, mult:4.8, cooldown:7, circles:0, ultimate:true },
+  ],
+  "Sukuna's Finger (Fragment)": [
+    { name:'Cursed Whisper', unlockLevel:1, mult:2.1, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Fragmented Malice', unlockLevel:3, mult:2.5, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Finger Resonance Burst', unlockLevel:6, mult:3.2, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Vessel Awakening', unlockLevel:10, mult:6.0, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Inverted Spear of Heaven': [
+    { name:'Nullifying Thrust', unlockLevel:1, mult:2.1, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Piercing Negation', unlockLevel:3, mult:2.5, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Spear Barrage', unlockLevel:6, mult:3.2, cooldown:4, circles:2, difficulty:0.7 },
+    { name:"Heaven's Cancel", unlockLevel:10, mult:6.0, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Dismantle / Cleave': [
+    { name:'Cleaving Slash', unlockLevel:1, mult:2.1, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Dismantling Cut', unlockLevel:3, mult:2.5, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Cross Cleave', unlockLevel:6, mult:3.2, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'World Cleaver', unlockLevel:10, mult:6.0, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Prison Realm Shard': [
+    { name:'Binding Shard', unlockLevel:1, mult:2.1, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Sealing Pulse', unlockLevel:3, mult:2.5, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Realm Fracture', unlockLevel:6, mult:3.2, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Prison Realm: Partial Seal', unlockLevel:10, mult:6.0, cooldown:9, circles:0, ultimate:true },
+  ],
+  // -- Companions --
+  'Yuta Okkotsu': [
+    { name:"Rika's Claw", unlockLevel:1, mult:1.9, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Copied Technique Combo', unlockLevel:3, mult:2.3, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Rika Assault', unlockLevel:6, mult:3.0, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Domain Expansion Assist: Authentic Mutual Love', unlockLevel:10, mult:5.2, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Mei Mei': [
+    { name:'Precision Shot', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Corvus Strike', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Battle Cost Combo', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Fully Compensated Barrage', unlockLevel:10, mult:4.8, cooldown:7, circles:0, ultimate:true },
+  ],
+  'Utahime Iori': [
+    { name:'Vocal Chant Strike', unlockLevel:1, mult:1.8, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Resonant Wave', unlockLevel:3, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Layered Chant Combo', unlockLevel:6, mult:2.9, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Faculty Support Barrage', unlockLevel:10, mult:4.8, cooldown:7, circles:0, ultimate:true },
+  ],
+  'Kento Nanami (Overtime)': [
+    { name:'Ratio Blow', unlockLevel:1, mult:1.9, cooldown:2, circles:1, difficulty:0.45 },
+    { name:'Overtime Strike', unlockLevel:3, mult:2.3, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Seven-Three Combo', unlockLevel:6, mult:3.0, cooldown:4, circles:2, difficulty:0.65 },
+    { name:'Overtime Domain Assist: Full Ratio', unlockLevel:10, mult:5.2, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Satoru Gojo': [
+    { name:'Assisted Blue', unlockLevel:1, mult:2.2, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Assisted Red', unlockLevel:3, mult:2.6, cooldown:3, circles:1, difficulty:0.55 },
+    { name:'Assisted Hollow Purple', unlockLevel:6, mult:3.8, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Domain Expansion Assist: Unlimited Void', unlockLevel:10, mult:6.5, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Yuki Tsukumo': [
+    { name:'Star Rage Punch', unlockLevel:1, mult:2.1, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Curse Manipulation Slam', unlockLevel:3, mult:2.5, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Piercing Blood Combo', unlockLevel:6, mult:3.2, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Domain Expansion Assist: Star Rage', unlockLevel:10, mult:6.0, cooldown:9, circles:0, ultimate:true },
+  ],
+  'Masamichi Yaga': [
+    { name:'Cursed Corpse Strike', unlockLevel:1, mult:2.0, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Puppet Barrage', unlockLevel:3, mult:2.4, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Panda Assault Combo', unlockLevel:6, mult:3.1, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Full Puppet Overdrive', unlockLevel:10, mult:5.8, cooldown:8, circles:0, ultimate:true },
+  ],
+  'Suguru Geto (Past)': [
+    { name:'Curse Womb Strike', unlockLevel:1, mult:2.0, cooldown:2, circles:1, difficulty:0.5 },
+    { name:'Uzumaki Combo', unlockLevel:3, mult:2.4, cooldown:2, circles:1, difficulty:0.55 },
+    { name:'Thousand Curses Barrage', unlockLevel:6, mult:3.1, cooldown:4, circles:2, difficulty:0.7 },
+    { name:'Domain Expansion Assist: Uzumaki', unlockLevel:10, mult:5.8, cooldown:8, circles:0, ultimate:true },
+  ],
+};
+
+// Any item without a curated tree above (common/rare/epic pool items) gets a generated
+// 3-rung tree so every bound item still grows with mastery.
+function generatedSkillTree(name, rarity){
+  const tierMult = { common:1.0, rare:1.15, epic:1.35, legendary:1.6, special_grade:1.9 }[rarity] || 1.0;
+  return [
+    { name:`${name} Strike`, unlockLevel:1, mult:1.5*tierMult, cooldown:2, circles:1, difficulty:0.4 },
+    { name:`${name} Combo`, unlockLevel:4, mult:1.9*tierMult, cooldown:3, circles:2, difficulty:0.55 },
+    { name:`${name}: Full Technique`, unlockLevel:8, mult:2.5*tierMult, cooldown:5, circles:2, difficulty:0.7 },
+  ];
+}
+function getItemSkillTree(name, rarity){
+  return ITEM_SKILL_TREES[name] || generatedSkillTree(name, rarity);
+}
 
 const UPGRADE_DEFS = [
   { key:'tapPower',  name:'Tap Power',            icon:'👊', desc:'Increases Cursed Energy gained per Train tap.' },
@@ -1072,13 +1356,27 @@ function renderAscension(){
   el.innerHTML = ASCENSION_DEFS.map(def=>{
     const lvl = asc(def.key); const cost = ascensionCost(def.key); const afford = player.currency >= cost;
     const equipped = player['equipped_'+def.key];
-    return `<div class="item-row">
-      <div class="item-name-wrap">
+    const equippedRarity = player['equipped_'+def.key+'_rarity'];
+    let treeHtml = '';
+    if(equipped){
+      const tree = getItemSkillTree(equipped, equippedRarity);
+      treeHtml = `<div class="skill-groups" style="margin-top:10px;">` + tree.map(node=>{
+        const unlocked = lvl >= node.unlockLevel;
+        return `<div class="skill-tree-row ${unlocked?'':'locked'} ${node.ultimate?'ultimate':''}">
+          <span class="skill-tree-name">${node.name}${node.ultimate?' 🌀':''}</span>
+          <span class="skill-tree-req ${unlocked?'unlocked':''}">${unlocked ? 'Unlocked' : `Mastery Lv.${node.unlockLevel}`}</span>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+    return `<div class="item-row" style="flex-wrap:wrap;">
+      <div class="item-name-wrap" style="width:100%;">
         <span style="font-size:18px;">${def.icon}</span>
-        <div><div style="font-weight:600;">${def.name} <span class="mono" style="color:var(--text-muted); font-size:11px;">Lv.${lvl}</span></div>
-        <div style="font-size:11px; color:var(--text-muted);">${equipped ? `Applies to: ${equipped}` : 'No item equipped in this slot'}</div></div>
+        <div style="flex:1;"><div style="font-weight:600;">${def.name} <span class="mono" style="color:var(--text-muted); font-size:11px;">Lv.${lvl}</span></div>
+        <div style="font-size:11px; color:var(--text-muted);">${equipped ? `Applies to: ${equipped}` : 'No item equipped in this slot'}</div>
+        ${treeHtml}
+        </div>
       </div>
-      <button class="btn ${afford?'':'secondary'}" style="width:auto; padding:8px 14px;" data-ascend="${def.key}" ${afford?'':'disabled'}>${cost.toLocaleString()} CE</button>
+      <button class="btn ${afford?'':'secondary'}" style="width:auto; padding:8px 14px; margin-top:10px;" data-ascend="${def.key}" ${afford?'':'disabled'}>${cost.toLocaleString()} CE</button>
     </div>`;
   }).join('');
   el.querySelectorAll('[data-ascend]').forEach(btn=>{
@@ -1298,24 +1596,138 @@ function renderInventory(){
 }
 
 function buildSkillsFromEquip(){
-  const skills = [];
+  const skills = STARTER_SKILLS.map(s=>({ ...s, remaining:0, source:'starter' }));
   SKILL_CATEGORIES.forEach(cat=>{
     const name = player['equipped_'+cat];
     const rarity = player['equipped_'+cat+'_rarity'];
-    if(name && rarity && RARITY_SKILL_STATS[rarity]){
-      const st = RARITY_SKILL_STATS[rarity];
-      const ascLvl = asc(cat);
-      const mult = st.mult + ascLvl * 0.15;
-      const cooldown = Math.max(1, st.cooldown - Math.floor(ascLvl/3));
-      skills.push({ key:cat, name, mult, cooldown, remaining:0 });
-    }
+    if(!name || !rarity) return;
+    const ascLvl = asc(cat);
+    const tree = getItemSkillTree(name, rarity);
+    tree.forEach((node, idx)=>{
+      if(ascLvl >= node.unlockLevel){
+        skills.push({
+          key:`${cat}_${idx}`, name:node.name, mult:node.mult, cooldown:node.cooldown,
+          circles:node.circles, difficulty:node.difficulty, ultimate:!!node.ultimate,
+          remaining:0, source:cat, itemName:name,
+        });
+      }
+    });
   });
   return skills;
 }
 
-function battleImpact(side, dmg, isCrit){
+// ---- Perfect-timing minigame ----
+function timingZoneForDifficulty(diff){
+  const d = diff == null ? 0.45 : diff;
+  const goodHalf = 54 - d*30;      // wider zone = easier
+  const perfectHalf = Math.max(4, goodHalf * 0.3);
+  const speed = 130 + d*230;        // degrees / second
+  return { goodHalf, perfectHalf, speed };
+}
+function angularDist(a,b){ const d = Math.abs(a-b) % 360; return d > 180 ? 360-d : d; }
+
+function runTimingChallenge(skill){
+  return new Promise(resolve=>{
+    const circles = skill.circles || 0;
+    if(circles <= 0){ resolve([]); return; }
+    const grades = [];
+    const overlay = document.getElementById('timingOverlay');
+    const nameEl = document.getElementById('timingSkillName');
+    const stageEl = document.getElementById('timingStageLabel');
+    const descEl = document.getElementById('timingDesc');
+    const marker = document.getElementById('timingMarker');
+    const track = document.getElementById('timingRingTrack');
+    const tapBtn = document.getElementById('timingTapBtn');
+    const gradePop = document.getElementById('timingGradePop');
+
+    nameEl.textContent = skill.name;
+    descEl.textContent = skill.desc || '';
+    overlay.style.display = 'flex';
+
+    let stageIndex = 0, angle = 0, rafId = null, lastTs = null;
+    let center = 0, goodHalf = 0, perfectHalf = 0, speed = 0, locked = false;
+
+    function renderDots(){
+      const dotsEl = document.getElementById('timingDots');
+      dotsEl.innerHTML = Array.from({length:circles}).map((_,i)=>{
+        if(i < grades.length){
+          const g = grades[i];
+          const cls = g==='PERFECT' ? 'perfect' : (g==='MISS' ? 'miss' : '');
+          return `<div class="timing-dot filled ${cls}"></div>`;
+        }
+        return `<div class="timing-dot"></div>`;
+      }).join('');
+    }
+
+    function setupStage(){
+      locked = false;
+      stageEl.textContent = circles > 1 ? `Hit ${stageIndex+1} of ${circles} — tap when it glows brightest` : 'Tap when it glows brightest';
+      renderDots();
+      const cfg = timingZoneForDifficulty(skill.difficulty);
+      goodHalf = cfg.goodHalf; perfectHalf = cfg.perfectHalf; speed = cfg.speed;
+      center = 40 + Math.random()*280;
+      const goodStart = center - goodHalf, goodEnd = center + goodHalf;
+      const perfStart = center - perfectHalf, perfEnd = center + perfectHalf;
+      track.style.background = `conic-gradient(from 0deg, var(--surface-2) 0deg ${goodStart}deg, var(--legendary) ${goodStart}deg ${perfStart}deg, #ffffff ${perfStart}deg ${perfEnd}deg, var(--legendary) ${perfEnd}deg ${goodEnd}deg, var(--surface-2) ${goodEnd}deg 360deg)`;
+      angle = Math.random()*360;
+      lastTs = null;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function tick(ts){
+      if(lastTs == null) lastTs = ts;
+      const dt = (ts - lastTs)/1000; lastTs = ts;
+      angle = (angle + speed*dt) % 360;
+      marker.style.transform = `rotate(${angle}deg) translateY(-95px)`;
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function finishOverlay(){
+      overlay.style.display = 'none';
+      tapBtn.removeEventListener('click', doTap);
+      resolve(grades);
+    }
+
+    function doTap(){
+      if(locked) return;
+      locked = true;
+      cancelAnimationFrame(rafId);
+      const dist = angularDist(angle, center);
+      const grade = dist <= perfectHalf ? 'PERFECT' : (dist <= goodHalf ? 'GOOD' : 'MISS');
+      grades.push(grade);
+      gradePop.textContent = grade;
+      gradePop.className = `timing-grade-pop ${grade.toLowerCase()} show`;
+      renderDots();
+      setTimeout(()=>{
+        gradePop.classList.remove('show');
+        stageIndex++;
+        if(stageIndex >= circles) finishOverlay();
+        else setupStage();
+      }, 420);
+    }
+
+    tapBtn.addEventListener('click', doTap);
+    setupStage();
+  });
+}
+
+function showUltimateBanner(name){
+  return new Promise(resolve=>{
+    const banner = document.getElementById('ultimateBanner');
+    document.getElementById('ultimateBannerName').textContent = name;
+    banner.style.display = 'flex';
+    setTimeout(()=>{ banner.style.display = 'none'; resolve(); }, 1150);
+  });
+}
+
+function battleImpact(side, dmg, isCrit, isBlackFlash){
   const card = document.querySelector('#battleOverlay .battle-card');
-  if(card){ card.classList.remove('shake'); void card.offsetWidth; card.classList.add(isCrit ? 'shake' : 'shake'); }
+  if(card){
+    card.classList.remove('shake','blackflash');
+    void card.offsetWidth;
+    card.classList.add(isBlackFlash ? 'blackflash' : 'shake');
+  }
   const barId = side === 'enemy' ? 'battleEnemyHpBar' : 'battlePlayerHpBar';
   const bar = document.getElementById(barId);
   const wrap = bar ? bar.parentElement : null;
@@ -1325,10 +1737,14 @@ function battleImpact(side, dmg, isCrit){
   }
   if(row){
     const pop = document.createElement('div');
-    pop.className = `dmg-pop ${side==='enemy'?'enemy-dmg':'player-dmg'} ${isCrit?'crit':''}`;
-    pop.textContent = (isCrit ? 'CRIT ' : '-') + dmg.toLocaleString();
+    pop.className = `dmg-pop ${side==='enemy'?'enemy-dmg':'player-dmg'} ${isCrit?'crit':''} ${isBlackFlash?'blackflash':''}`;
+    pop.textContent = (isBlackFlash ? 'BLACK FLASH ' : (isCrit ? 'CRIT ' : '-')) + dmg.toLocaleString();
     row.appendChild(pop);
     setTimeout(()=> pop.remove(), 750);
+  }
+  if(isBlackFlash){
+    const flash = document.getElementById('blackFlashFlash');
+    flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
   }
 }
 
@@ -1342,6 +1758,9 @@ function startBattle(enemyDef){
     pattern: enemyDef.pattern || 'charge',
     turnCount: 0,
     charging: false,
+    busy: false,
+    buffMult: 0,
+    buffTurns: 0,
     playerMaxHp: playerMaxHP(),
     playerHp: playerMaxHP(),
     skills: buildSkillsFromEquip(),
@@ -1352,28 +1771,66 @@ function startBattle(enemyDef){
   renderBattle();
 }
 
-function battleAction(actionKey){
-  if(!battleState) return;
-  let dmg, label;
-  if(actionKey === 'attack'){
-    dmg = playerAttackDamage(); label = 'Attack';
-  } else {
-    const skill = battleState.skills.find(s=>s.key===actionKey);
+async function battleAction(actionKey){
+  if(!battleState || battleState.busy) return;
+  let skill = null;
+  if(actionKey !== 'attack'){
+    skill = battleState.skills.find(s=>s.key===actionKey);
     if(!skill || skill.remaining > 0) return;
-    dmg = Math.round(playerAttackDamage() * skill.mult);
-    skill.remaining = skill.cooldown;
-    label = skill.name;
   }
+  battleState.busy = true;
+  renderBattle();
+
+  let grades = [];
+  if(skill && skill.ultimate) await showUltimateBanner(skill.name);
+  else if(skill && skill.circles > 0) grades = await runTimingChallenge(skill);
+
+  if(!battleState) return; // battle ended while the challenge was open
+
+  const label = skill ? skill.name : 'Attack';
+  let dmg = playerAttackDamage() * (skill ? skill.mult : 1);
+  if(battleState.buffMult) dmg *= (1 + battleState.buffMult);
+
+  let perfectCount = 0;
+  if(grades.length){
+    let gradeMultSum = 0;
+    grades.forEach(g=>{
+      if(g === 'PERFECT'){ gradeMultSum += 1.35; perfectCount++; }
+      else if(g === 'GOOD') gradeMultSum += 1.0;
+      else gradeMultSum += 0.6;
+    });
+    dmg *= (gradeMultSum / grades.length);
+  }
+
   dmg = Math.max(1, Math.round(dmg * (0.85 + Math.random()*0.3)));
   let isCrit = false;
   if(Math.random() < 0.15){ dmg = Math.round(dmg * 1.5); isCrit = true; }
+
+  let isBlackFlash = false;
+  if(skill){
+    const bfChance = Math.min(0.75, 0.05 + perfectCount*0.18);
+    if(Math.random() < bfChance){ isBlackFlash = true; dmg = Math.round(dmg * 2.2); }
+  }
+
+  if(skill){
+    skill.remaining = skill.cooldown;
+    if(skill.key === 'reinforcement' && grades.some(g=>g==='PERFECT')){
+      battleState.buffMult = 0.25; battleState.buffTurns = 3;
+      battleState.log.push(`You reinforce your body — next attacks hit harder!`);
+    }
+  }
+
   battleState.enemyHp = Math.max(0, battleState.enemyHp - dmg);
-  battleState.log.push(isCrit ? `You used ${label} for a CRITICAL ${dmg.toLocaleString()} damage!` : `You used ${label} for ${dmg.toLocaleString()} damage.`);
-  battleImpact('enemy', dmg, isCrit);
+  battleState.log.push(isBlackFlash
+    ? `⚡ BLACK FLASH! Your ${label} lands with devastating force for ${dmg.toLocaleString()} damage!`
+    : (isCrit ? `You used ${label} for a CRITICAL ${dmg.toLocaleString()} damage!` : `You used ${label} for ${dmg.toLocaleString()} damage.`));
+  battleImpact('enemy', dmg, isCrit, isBlackFlash);
   battleState.skills.forEach(s=>{ if(s.key !== actionKey && s.remaining > 0) s.remaining--; });
+  if(battleState.buffTurns > 0){ battleState.buffTurns--; if(battleState.buffTurns <= 0) battleState.buffMult = 0; }
 
   if(battleState.enemyHp <= 0){
     battleState.log.push(`${battleState.enemyName} has been defeated!`);
+    battleState.busy = false;
     renderBattle();
     setTimeout(()=> endBattle(true), 500);
     return;
@@ -1413,13 +1870,16 @@ function battleAction(actionKey){
 
   if(battleState.playerHp <= 0){
     battleState.log.push(`You have been defeated. Retreating...`);
+    battleState.busy = false;
     renderBattle();
     setTimeout(()=> endBattle(false), 500);
     return;
   }
+  battleState.busy = false;
   renderBattle();
 }
 
+const SKILL_SOURCE_LABEL = { starter:'Base Skills', technique:'Cursed Technique', companion:'Companion', tool:'Cursed Tool' };
 function renderBattle(){
   if(!battleState) return;
   const enemyPct = Math.max(0, (battleState.enemyHp/battleState.enemyMaxHp)*100);
@@ -1435,11 +1895,14 @@ function renderBattle(){
   logEl.innerHTML = battleState.log.slice(-8).map(l=>`<div>${l}</div>`).join('');
   logEl.scrollTop = logEl.scrollHeight;
 
+  const busy = battleState.busy;
   const actionsEl = document.getElementById('battleActions');
-  let html = `<button class="btn" data-action="attack">Attack (${playerAttackDamage().toLocaleString()})</button>`;
+  let html = `<button class="btn" data-action="attack" ${busy?'disabled':''}>Attack (${playerAttackDamage().toLocaleString()})</button>`;
   battleState.skills.forEach(s=>{
-    const ready = s.remaining <= 0;
-    html += `<button class="btn ${ready?'':'secondary'}" data-action="${s.key}" ${ready?'':'disabled'}>${s.name}${ready?'':` (${s.remaining})`}</button>`;
+    const ready = s.remaining <= 0 && !busy;
+    const cls = s.ultimate ? 'blood' : (ready ? '' : 'secondary');
+    const tag = s.ultimate ? ' 🌀' : '';
+    html += `<button class="btn ${cls}" data-action="${s.key}" ${ready?'':'disabled'} title="${SKILL_SOURCE_LABEL[s.source]||''}${s.itemName?': '+s.itemName:''}">${s.name}${tag}${s.remaining>0?` (${s.remaining})`:''}</button>`;
   });
   actionsEl.innerHTML = html;
   actionsEl.querySelectorAll('[data-action]').forEach(btn=>{
