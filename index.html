@@ -279,11 +279,25 @@
   .timing-grade-pop.good{color:var(--rare);}
   .timing-grade-pop.miss{color:var(--blood);}
   .timing-tap-btn{width:100%; margin-top:4px;}
-  .timing-dots{display:flex; gap:8px; justify-content:center; margin-top:14px;}
-  .timing-dot{width:9px; height:9px; border-radius:50%; background:var(--border); border:1px solid var(--border);}
-  .timing-dot.filled{background:var(--purple); border-color:var(--purple);}
-  .timing-dot.filled.perfect{background:var(--legendary); border-color:var(--legendary);}
-  .timing-dot.filled.miss{background:var(--blood); border-color:var(--blood);}
+
+  /* ---- Hold (charge & release) minigame ---- */
+  .hold-bar-wrap{margin:18px 0 22px;}
+  .hold-bar-track{position:relative; width:100%; height:28px; background:var(--surface-2); border:1px solid var(--border); border-radius:6px; overflow:hidden;}
+  .hold-bar-zone{position:absolute; top:0; bottom:0; background:linear-gradient(90deg, var(--legendary), #fff, var(--legendary)); opacity:0.6;}
+  .hold-bar-fill{position:absolute; top:0; bottom:0; left:0; width:0%; background:var(--purple); opacity:0.9;}
+
+  /* ---- Reaction (flash-tap) minigame ---- */
+  .reaction-wrap{margin:20px 0 26px; display:flex; align-items:center; justify-content:center;}
+  .reaction-circle{
+    width:120px; height:120px; border-radius:50%; background:var(--surface-2); border:3px solid var(--border);
+    transition:background .08s, border-color .08s, transform .08s; display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em;
+  }
+  .reaction-circle.flash{
+    background:#fff; border-color:var(--legendary); color:#111;
+    box-shadow:0 0 30px 10px rgba(255,255,255,0.7); transform:scale(1.08);
+  }
+
   .ultimate-banner{
     position:fixed; inset:0; z-index:1250; display:none; align-items:center; justify-content:center;
     background:radial-gradient(circle, rgba(123,47,247,0.35), rgba(6,6,12,0.92));
@@ -297,12 +311,48 @@
     70%{opacity:1; transform:scale(1);}
     100%{opacity:0; transform:scale(1.02);}
   }
-  .black-flash-flash{position:fixed; inset:0; z-index:1150; pointer-events:none; background:#fff; opacity:0; display:block;}
-  .black-flash-flash.go{animation:blackFlashFlash .5s ease-out;}
-  @keyframes blackFlashFlash{
-    0%{opacity:0;}
-    12%{opacity:1;}
-    100%{opacity:0;}
+
+  /* ---- Black Flash: red/black lightning banner ---- */
+  .bf-banner{
+    position:fixed; inset:0; z-index:1260; display:none; align-items:center; justify-content:center;
+    pointer-events:none; overflow:hidden; background:transparent;
+  }
+  .bf-banner.go{display:flex; animation:bfBgStrobe .55s steps(1,end) 2;}
+  @keyframes bfBgStrobe{
+    0%{background:rgba(0,0,0,0.85);}
+    25%{background:rgba(224,41,63,0.55);}
+    50%{background:rgba(0,0,0,0.9);}
+    75%{background:rgba(255,255,255,0.22);}
+    100%{background:transparent;}
+  }
+  .bf-bolt{
+    position:absolute; width:16px; height:72%; top:14%; opacity:0;
+    clip-path:polygon(45% 0%, 65% 0%, 40% 38%, 65% 38%, 25% 100%, 40% 55%, 15% 55%);
+    background:linear-gradient(180deg, #fff, var(--blood) 55%, #000 100%);
+    filter:drop-shadow(0 0 10px var(--blood)) drop-shadow(0 0 18px #000);
+  }
+  .bf-bolt-1{left:20%; transform:rotate(-8deg) scale(1.3);}
+  .bf-bolt-2{left:48%; transform:rotate(6deg) scale(1.7);}
+  .bf-bolt-3{left:74%; transform:rotate(-14deg) scale(1.1);}
+  .bf-banner.go .bf-bolt{animation:bfBoltFlicker .55s steps(2,end) 2;}
+  .bf-banner.go .bf-bolt-2{animation-delay:.05s;}
+  .bf-banner.go .bf-bolt-3{animation-delay:.1s;}
+  @keyframes bfBoltFlicker{
+    0%,100%{opacity:0;}
+    20%,60%{opacity:1;}
+    40%,80%{opacity:0.3;}
+  }
+  .bf-text{
+    position:relative; font-family:'Cinzel',serif; font-weight:800; font-size:42px; letter-spacing:0.1em;
+    color:#fff; text-shadow:3px 0 0 var(--blood), -3px 0 0 #000, 0 0 24px var(--blood); opacity:0; text-align:center;
+  }
+  .bf-banner.go .bf-text{animation:bfTextPop .9s cubic-bezier(.2,1.7,.3,1) forwards;}
+  @keyframes bfTextPop{
+    0%{opacity:0; transform:scale(2.4) skewX(-12deg);}
+    30%{opacity:1; transform:scale(1) skewX(5deg);}
+    55%{transform:scale(1.06) skewX(-3deg);}
+    80%{opacity:1; transform:scale(1);}
+    100%{opacity:0; transform:scale(1);}
   }
   .battle-card.blackflash{animation:blackFlashShake .5s ease;}
   @keyframes blackFlashShake{
@@ -520,6 +570,18 @@
     </div>
     <div class="seal-frame panel">
       <div class="curse-mark"></div>
+      <h2>Battle Loadout</h2>
+      <p class="sub">Quick Strike, Heavy Blow, and Reinforcement are always active. Choose a limited number of additional unlocked skills to bring into battle — Domain Expansions unlock automatically and never take a slot.</p>
+      <div id="loadoutList"></div>
+    </div>
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
+      <h2>Jujutsu Skills</h2>
+      <p class="sub">Universal techniques any sorcerer can learn — unlocked by level, purchased with Cursed Energy, no gear required.</p>
+      <div id="universalSkillsList"></div>
+    </div>
+    <div class="seal-frame panel">
+      <div class="curse-mark"></div>
       <h2>Upgrades</h2>
       <p class="sub">Spend Cursed Energy to permanently strengthen your sorcerer.</p>
       <div class="item-list" id="upgradeList"></div>
@@ -603,12 +665,17 @@
     <div class="timing-ring-wrap" id="timingRingWrap">
       <div class="timing-ring-track" id="timingRingTrack"></div>
       <div class="timing-marker-wrap"><div class="timing-marker" id="timingMarker"></div></div>
-      <div class="timing-center-label">
-        <div class="tc-desc" id="timingDesc"></div>
-      </div>
       <div class="timing-grade-pop" id="timingGradePop"></div>
     </div>
-    <div class="timing-dots" id="timingDots"></div>
+    <div class="hold-bar-wrap" id="holdBarWrap" style="display:none;">
+      <div class="hold-bar-track">
+        <div class="hold-bar-zone" id="holdBarZone"></div>
+        <div class="hold-bar-fill" id="holdBarFill"></div>
+      </div>
+    </div>
+    <div class="reaction-wrap" id="reactionWrap" style="display:none;">
+      <div class="reaction-circle" id="reactionCircle">Ready...</div>
+    </div>
     <button class="btn timing-tap-btn" id="timingTapBtn">Tap!</button>
   </div>
 </div>
@@ -617,7 +684,12 @@
   <div class="ub-label">Domain Expansion</div>
   <div class="ub-name" id="ultimateBannerName">Infinite Void</div>
 </div>
-<div class="black-flash-flash" id="blackFlashFlash"></div>
+<div class="bf-banner" id="bfBanner">
+  <div class="bf-bolt bf-bolt-1"></div>
+  <div class="bf-bolt bf-bolt-2"></div>
+  <div class="bf-bolt bf-bolt-3"></div>
+  <div class="bf-text">BLACK FLASH</div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -699,15 +771,42 @@ const GRADES = ['Grade 4','Grade 3','Grade 2','Grade 1','Semi-Special Grade','Sp
 const REBIRTH_LEVEL = 60;
 
 // ---- Battle skill system ----
-// Every sorcerer starts with these three, no equipment required.
+const MAX_LOADOUT = 4; // how many non-base skills a sorcerer can bring into a fight at once
+
+// Every sorcerer starts with these three, no equipment required. Each uses a different
+// minigame so combat doesn't feel like the same button over and over.
 const STARTER_SKILLS = [
-  { key:'quickStrike', name:'Quick Strike', mult:1.3, cooldown:1, circles:1, difficulty:0.3,
-    desc:'A fast strike. Time the tap for bonus damage.' },
-  { key:'heavyBlow',    name:'Heavy Blow',    mult:2.0, cooldown:2, circles:2, difficulty:0.55,
-    desc:'A crushing two-hit combo. Land both perfectly to spike your Black Flash chance.' },
-  { key:'reinforcement', name:'Reinforcement', mult:1.15, cooldown:2, circles:1, difficulty:0.3, selfBuff:true,
-    desc:'Reinforce your body with cursed energy. A perfect hit also boosts your next attack.' },
+  { key:'quickStrike', name:'Quick Strike', mult:1.3, cooldown:1, minigame:'reaction', difficulty:0.35,
+    desc:'A fast strike — tap the instant it flashes.' },
+  { key:'heavyBlow',    name:'Heavy Blow',    mult:2.15, cooldown:2, minigame:'hold', difficulty:0.55,
+    desc:'Charge your cursed energy and release inside the glowing zone for a crushing blow.' },
+  { key:'reinforcement', name:'Reinforcement', mult:0, cooldown:3, minigame:'reaction', difficulty:0.3, defense:true,
+    desc:'Brace your body with cursed energy — cuts incoming damage for 2 turns and mends a little HP.' },
 ];
+
+// Universal jujutsu skills any sorcerer can learn — unlocked by level, bought with Cursed Energy,
+// independent of equipped gear. They compete for the same limited loadout slots as gear skills.
+const UNIVERSAL_SKILLS = [
+  { key:'simpleDomain', name:'Simple Domain', requiredLevel:12, cost:2500, mult:2.0, cooldown:3, minigame:'reaction', difficulty:0.5,
+    desc:'A weakened domain that guarantees your next strike connects.' },
+  { key:'dontMove', name:"Cursed Speech: Don't Move", requiredLevel:15, cost:3000, mult:1.8, cooldown:3, minigame:'reaction', difficulty:0.55,
+    desc:'Bind your foe in place with a cursed word, opening them up for a hit.' },
+  { key:'divergentFist', name:'Divergent Fist: 8:2', requiredLevel:18, cost:4000, mult:2.6, cooldown:4, minigame:'hold', difficulty:0.6,
+    desc:'A delayed second impact rocks the target just after the first lands.' },
+  { key:'strawDollRedirect', name:'Straw Doll Technique: Redirect', requiredLevel:20, cost:4500, mult:2.4, cooldown:4, minigame:'timing', difficulty:0.6,
+    desc:'Redirect pain through a straw doll link for a brutal counter.' },
+  { key:'piercingBlood', name:'Idle Transfiguration: Piercing Blood', requiredLevel:25, cost:6000, mult:3.0, cooldown:5, minigame:'hold', difficulty:0.65,
+    desc:'Command transfigured blood into a piercing lance.' },
+  { key:'cleaveDismantleFlurry', name:'Cleave & Dismantle Flurry', requiredLevel:30, cost:8000, mult:3.4, cooldown:5, minigame:'timing', difficulty:0.7,
+    desc:'A relentless flurry of unseen cuts from two directions at once.' },
+];
+
+// Loadout + purchased-universal-skill state piggybacks on the existing ascension JSONB column
+// (under non-category keys) so no schema migration is needed.
+function purchasedUniversalKeys(){ return (player.ascension && player.ascension._purchased) || []; }
+function loadoutKeys(){ return (player.ascension && player.ascension._loadout) || []; }
+function setLoadoutKeys(arr){ if(!player.ascension) player.ascension = {}; player.ascension._loadout = arr; }
+function setPurchasedKeys(arr){ if(!player.ascension) player.ascension = {}; player.ascension._purchased = arr; }
 
 // Curated mastery-unlock trees for the marquee legendary / special-grade items.
 // Each entry unlocks at the listed mastery (ascension) level for that slot.
@@ -871,8 +970,12 @@ function generatedSkillTree(name, rarity){
     { name:`${name}: Full Technique`, unlockLevel:8, mult:2.5*tierMult, cooldown:5, circles:2, difficulty:0.7 },
   ];
 }
+// Tier 0 (first unlock) uses a quick reaction tap, tier 1 uses the timing dial, tier 2 uses the
+// charge-and-release bar, and the ultimate (tier 3) auto-resolves behind the Domain Expansion banner.
+const MINIGAME_BY_TIER = ['reaction', 'timing', 'hold', 'none'];
 function getItemSkillTree(name, rarity){
-  return ITEM_SKILL_TREES[name] || generatedSkillTree(name, rarity);
+  const raw = ITEM_SKILL_TREES[name] || generatedSkillTree(name, rarity);
+  return raw.map((node, i) => ({ ...node, minigame: MINIGAME_BY_TIER[Math.min(i, MINIGAME_BY_TIER.length-1)] }));
 }
 
 const UPGRADE_DEFS = [
@@ -1383,6 +1486,95 @@ function renderAscension(){
     btn.addEventListener('click', ()=> buyAscension(btn.dataset.ascend));
   });
 }
+
+function renderLoadoutPanel(){
+  const el = document.getElementById('loadoutList');
+  if(!el) return;
+  const all = getAllUnlockedSkills();
+  const base = all.filter(s=>s.source==='starter');
+  const ultimates = all.filter(s=>s.ultimate);
+  const eligible = all.filter(s=>s.loadoutEligible);
+  const chosen = loadoutKeys();
+
+  let html = `<div class="stat-line"><span>Loadout slots used</span><span class="mono">${chosen.length} / ${MAX_LOADOUT}</span></div>`;
+  html += `<div class="skill-groups">`;
+  html += `<div class="skill-group-title"><span>Always Active</span><div class="g-line"></div></div>`;
+  base.forEach(s=>{
+    html += `<div class="skill-tree-row"><span class="skill-tree-name">${s.name}${s.defense?' 🛡':''}</span><span class="skill-tree-req unlocked">Base</span></div>`;
+  });
+  if(ultimates.length){
+    html += `<div class="skill-group-title"><span>Domain Expansions</span><div class="g-line"></div></div>`;
+    ultimates.forEach(s=>{
+      html += `<div class="skill-tree-row ultimate"><span class="skill-tree-name">${s.name} 🌀</span><span class="skill-tree-req unlocked">Doesn't use a slot</span></div>`;
+    });
+  }
+  html += `<div class="skill-group-title"><span>Choose up to ${MAX_LOADOUT}</span><div class="g-line"></div></div>`;
+  if(!eligible.length){
+    html += `<div style="font-size:12px; color:var(--text-muted);">Level up mastery on an equipped slot, or learn a Jujutsu Skill below, to unlock skills you can slot in here.</div>`;
+  }
+  eligible.forEach(s=>{
+    const isIn = chosen.includes(s.key);
+    html += `<div class="skill-tree-row ${isIn?'':'locked'}">
+      <span class="skill-tree-name">${s.name}</span>
+      <button class="btn ${isIn?'':'secondary'}" style="width:auto; padding:6px 12px; font-size:11px;" data-loadout-toggle="${s.key}">${isIn?'Unequip':'Equip'}</button>
+    </div>`;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+  el.querySelectorAll('[data-loadout-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=> toggleLoadout(btn.dataset.loadoutToggle));
+  });
+}
+
+async function toggleLoadout(key){
+  let chosen = loadoutKeys().slice();
+  if(chosen.includes(key)){
+    chosen = chosen.filter(k=>k!==key);
+  } else {
+    if(chosen.length >= MAX_LOADOUT){ showToast(`You can only equip ${MAX_LOADOUT} skills at once.`); return; }
+    chosen.push(key);
+  }
+  setLoadoutKeys(chosen);
+  renderLoadoutPanel();
+  await savePlayer();
+}
+
+function renderUniversalSkillsPanel(){
+  const el = document.getElementById('universalSkillsList');
+  if(!el) return;
+  const purchased = purchasedUniversalKeys();
+  el.innerHTML = UNIVERSAL_SKILLS.map(u=>{
+    const owned = purchased.includes(u.key);
+    const leveled = player.level >= u.requiredLevel;
+    let action;
+    if(owned) action = `<span class="skill-tree-req unlocked">Learned</span>`;
+    else if(!leveled) action = `<span class="skill-tree-req">Requires Lv.${u.requiredLevel}</span>`;
+    else {
+      const afford = player.currency >= u.cost;
+      action = `<button class="btn ${afford?'':'secondary'}" style="width:auto; padding:6px 12px; font-size:11px;" data-buy-skill="${u.key}" ${afford?'':'disabled'}>${u.cost.toLocaleString()} CE</button>`;
+    }
+    return `<div class="skill-tree-row ${owned?'':'locked'}" style="align-items:flex-start;">
+      <div style="flex:1;"><div class="skill-tree-name">${u.name}</div><div style="font-size:10px; color:var(--text-muted); max-width:220px; margin-top:2px;">${u.desc}</div></div>
+      ${action}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-buy-skill]').forEach(btn=>{
+    btn.addEventListener('click', ()=> buyUniversalSkill(btn.dataset.buySkill));
+  });
+}
+
+async function buyUniversalSkill(key){
+  const def = UNIVERSAL_SKILLS.find(u=>u.key===key);
+  if(!def) return;
+  if(player.level < def.requiredLevel) return;
+  if(purchasedUniversalKeys().includes(key)) return;
+  if(player.currency < def.cost) return;
+  player.currency -= def.cost;
+  setPurchasedKeys(purchasedUniversalKeys().concat(key));
+  renderAll();
+  await savePlayer();
+}
+
 function renderUpgrades(){
   const el = document.getElementById('upgradeList');
   el.innerHTML = UPGRADE_DEFS.map(def=>{
@@ -1595,8 +1787,8 @@ function renderInventory(){
   });
 }
 
-function buildSkillsFromEquip(){
-  const skills = STARTER_SKILLS.map(s=>({ ...s, remaining:0, source:'starter' }));
+function getAllUnlockedSkills(){
+  const skills = STARTER_SKILLS.map(s=>({ ...s, remaining:0, source:'starter', loadoutEligible:false }));
   SKILL_CATEGORIES.forEach(cat=>{
     const name = player['equipped_'+cat];
     const rarity = player['equipped_'+cat+'_rarity'];
@@ -1607,16 +1799,33 @@ function buildSkillsFromEquip(){
       if(ascLvl >= node.unlockLevel){
         skills.push({
           key:`${cat}_${idx}`, name:node.name, mult:node.mult, cooldown:node.cooldown,
-          circles:node.circles, difficulty:node.difficulty, ultimate:!!node.ultimate,
-          remaining:0, source:cat, itemName:name,
+          minigame:node.minigame, difficulty:node.difficulty, ultimate:!!node.ultimate,
+          remaining:0, source:cat, itemName:name, loadoutEligible:!node.ultimate,
         });
       }
     });
   });
+  const purchased = purchasedUniversalKeys();
+  UNIVERSAL_SKILLS.forEach(u=>{
+    if(purchased.includes(u.key) && player.level >= u.requiredLevel){
+      skills.push({
+        key:'universal_'+u.key, name:u.name, mult:u.mult, cooldown:u.cooldown,
+        minigame:u.minigame, difficulty:u.difficulty, ultimate:false,
+        remaining:0, source:'universal', loadoutEligible:true,
+      });
+    }
+  });
   return skills;
 }
+// What actually goes into a battle: base skills + any unlocked Domain Expansions (free, rare,
+// long cooldown) + whichever gear/universal skills the player chose to slot (capped at MAX_LOADOUT).
+function getBattleSkills(){
+  const all = getAllUnlockedSkills();
+  const chosen = new Set(loadoutKeys());
+  return all.filter(s => !s.loadoutEligible || chosen.has(s.key));
+}
 
-// ---- Perfect-timing minigame ----
+// ---- Minigames: three distinct feels so combat doesn't repeat the same input over and over ----
 function timingZoneForDifficulty(diff){
   const d = diff == null ? 0.45 : diff;
   const goodHalf = 54 - d*30;      // wider zone = easier
@@ -1626,55 +1835,37 @@ function timingZoneForDifficulty(diff){
 }
 function angularDist(a,b){ const d = Math.abs(a-b) % 360; return d > 180 ? 360-d : d; }
 
+function showMinigameMode(mode){
+  document.getElementById('timingRingWrap').style.display = mode === 'timing' ? 'block' : 'none';
+  document.getElementById('holdBarWrap').style.display = mode === 'hold' ? 'block' : 'none';
+  document.getElementById('reactionWrap').style.display = mode === 'reaction' ? 'flex' : 'none';
+}
+
+// Rotating dial — tap when the marker crosses the glowing zone.
 function runTimingChallenge(skill){
   return new Promise(resolve=>{
-    const circles = skill.circles || 0;
-    if(circles <= 0){ resolve([]); return; }
-    const grades = [];
     const overlay = document.getElementById('timingOverlay');
     const nameEl = document.getElementById('timingSkillName');
     const stageEl = document.getElementById('timingStageLabel');
-    const descEl = document.getElementById('timingDesc');
     const marker = document.getElementById('timingMarker');
     const track = document.getElementById('timingRingTrack');
     const tapBtn = document.getElementById('timingTapBtn');
     const gradePop = document.getElementById('timingGradePop');
 
+    showMinigameMode('timing');
     nameEl.textContent = skill.name;
-    descEl.textContent = skill.desc || '';
+    stageEl.textContent = 'Tap when it glows brightest';
+    tapBtn.textContent = 'Tap!';
     overlay.style.display = 'flex';
 
-    let stageIndex = 0, angle = 0, rafId = null, lastTs = null;
-    let center = 0, goodHalf = 0, perfectHalf = 0, speed = 0, locked = false;
+    const cfg = timingZoneForDifficulty(skill.difficulty);
+    const { goodHalf, perfectHalf, speed } = cfg;
+    const center = 40 + Math.random()*280;
+    const goodStart = center - goodHalf, goodEnd = center + goodHalf;
+    const perfStart = center - perfectHalf, perfEnd = center + perfectHalf;
+    track.style.background = `conic-gradient(from 0deg, var(--surface-2) 0deg ${goodStart}deg, var(--legendary) ${goodStart}deg ${perfStart}deg, #ffffff ${perfStart}deg ${perfEnd}deg, var(--legendary) ${perfEnd}deg ${goodEnd}deg, var(--surface-2) ${goodEnd}deg 360deg)`;
 
-    function renderDots(){
-      const dotsEl = document.getElementById('timingDots');
-      dotsEl.innerHTML = Array.from({length:circles}).map((_,i)=>{
-        if(i < grades.length){
-          const g = grades[i];
-          const cls = g==='PERFECT' ? 'perfect' : (g==='MISS' ? 'miss' : '');
-          return `<div class="timing-dot filled ${cls}"></div>`;
-        }
-        return `<div class="timing-dot"></div>`;
-      }).join('');
-    }
-
-    function setupStage(){
-      locked = false;
-      stageEl.textContent = circles > 1 ? `Hit ${stageIndex+1} of ${circles} — tap when it glows brightest` : 'Tap when it glows brightest';
-      renderDots();
-      const cfg = timingZoneForDifficulty(skill.difficulty);
-      goodHalf = cfg.goodHalf; perfectHalf = cfg.perfectHalf; speed = cfg.speed;
-      center = 40 + Math.random()*280;
-      const goodStart = center - goodHalf, goodEnd = center + goodHalf;
-      const perfStart = center - perfectHalf, perfEnd = center + perfectHalf;
-      track.style.background = `conic-gradient(from 0deg, var(--surface-2) 0deg ${goodStart}deg, var(--legendary) ${goodStart}deg ${perfStart}deg, #ffffff ${perfStart}deg ${perfEnd}deg, var(--legendary) ${perfEnd}deg ${goodEnd}deg, var(--surface-2) ${goodEnd}deg 360deg)`;
-      angle = Math.random()*360;
-      lastTs = null;
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(tick);
-    }
-
+    let angle = Math.random()*360, rafId = null, lastTs = null, locked = false;
     function tick(ts){
       if(lastTs == null) lastTs = ts;
       const dt = (ts - lastTs)/1000; lastTs = ts;
@@ -1682,34 +1873,141 @@ function runTimingChallenge(skill){
       marker.style.transform = `rotate(${angle}deg) translateY(-95px)`;
       rafId = requestAnimationFrame(tick);
     }
+    rafId = requestAnimationFrame(tick);
 
-    function finishOverlay(){
-      overlay.style.display = 'none';
-      tapBtn.removeEventListener('click', doTap);
-      resolve(grades);
-    }
-
-    function doTap(){
+    function onTap(){
       if(locked) return;
       locked = true;
       cancelAnimationFrame(rafId);
       const dist = angularDist(angle, center);
       const grade = dist <= perfectHalf ? 'PERFECT' : (dist <= goodHalf ? 'GOOD' : 'MISS');
-      grades.push(grade);
       gradePop.textContent = grade;
       gradePop.className = `timing-grade-pop ${grade.toLowerCase()} show`;
-      renderDots();
       setTimeout(()=>{
         gradePop.classList.remove('show');
-        stageIndex++;
-        if(stageIndex >= circles) finishOverlay();
-        else setupStage();
+        overlay.style.display = 'none';
+        tapBtn.removeEventListener('click', onTap);
+        resolve(grade);
       }, 420);
     }
-
-    tapBtn.addEventListener('click', doTap);
-    setupStage();
+    tapBtn.addEventListener('click', onTap);
   });
+}
+
+// Charge-and-release power bar — hold to fill it, release inside the glowing zone.
+function runHoldChallenge(skill){
+  return new Promise(resolve=>{
+    const overlay = document.getElementById('timingOverlay');
+    const nameEl = document.getElementById('timingSkillName');
+    const stageEl = document.getElementById('timingStageLabel');
+    const tapBtn = document.getElementById('timingTapBtn');
+    const gradePop = document.getElementById('timingGradePop');
+    const zoneEl = document.getElementById('holdBarZone');
+    const fillEl = document.getElementById('holdBarFill');
+
+    showMinigameMode('hold');
+    nameEl.textContent = skill.name;
+    stageEl.textContent = 'Release inside the glowing zone';
+    tapBtn.textContent = 'Release!';
+    overlay.style.display = 'flex';
+
+    const diff = skill.difficulty == null ? 0.5 : skill.difficulty;
+    const zoneWidth = 34 - diff*18;
+    const perfectWidth = zoneWidth*0.35;
+    const zoneStart = 15 + Math.random()*(85 - 15 - zoneWidth);
+    const zoneCenter = zoneStart + zoneWidth/2;
+    zoneEl.style.left = zoneStart + '%';
+    zoneEl.style.width = zoneWidth + '%';
+    fillEl.style.width = '0%';
+
+    let fill = 0, dir = 1, rafId = null, lastTs = null, locked = false;
+    const speed = 55 + diff*45;
+    function tick(ts){
+      if(lastTs == null) lastTs = ts;
+      const dt = (ts - lastTs)/1000; lastTs = ts;
+      fill += dir*speed*dt;
+      if(fill >= 100){ fill = 100; dir = -1; }
+      if(fill <= 0){ fill = 0; dir = 1; }
+      fillEl.style.width = fill + '%';
+      rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
+
+    function onRelease(){
+      if(locked) return;
+      locked = true;
+      cancelAnimationFrame(rafId);
+      const dist = Math.abs(fill - zoneCenter);
+      const grade = dist <= perfectWidth/2 ? 'PERFECT' : (dist <= zoneWidth/2 ? 'GOOD' : 'MISS');
+      gradePop.textContent = grade;
+      gradePop.className = `timing-grade-pop ${grade.toLowerCase()} show`;
+      setTimeout(()=>{
+        gradePop.classList.remove('show');
+        overlay.style.display = 'none';
+        tapBtn.removeEventListener('click', onRelease);
+        resolve(grade);
+      }, 420);
+    }
+    tapBtn.addEventListener('click', onRelease);
+  });
+}
+
+// Reaction test — wait for the flash, then tap as fast as you can.
+function runReactionChallenge(skill){
+  return new Promise(resolve=>{
+    const overlay = document.getElementById('timingOverlay');
+    const nameEl = document.getElementById('timingSkillName');
+    const stageEl = document.getElementById('timingStageLabel');
+    const tapBtn = document.getElementById('timingTapBtn');
+    const gradePop = document.getElementById('timingGradePop');
+    const circle = document.getElementById('reactionCircle');
+
+    showMinigameMode('reaction');
+    nameEl.textContent = skill.name;
+    stageEl.textContent = 'Wait for the flash, then tap!';
+    tapBtn.textContent = 'Tap!';
+    circle.classList.remove('flash');
+    circle.textContent = 'Ready...';
+    overlay.style.display = 'flex';
+
+    const diff = skill.difficulty == null ? 0.45 : skill.difficulty;
+    const delay = 500 + Math.random()*1300;
+    const windowMs = 480 - diff*220;
+    let flashed = false, flashTime = 0, locked = false;
+    const timeoutId = setTimeout(()=>{
+      flashed = true; flashTime = performance.now();
+      circle.classList.add('flash'); circle.textContent = 'TAP!';
+    }, delay);
+
+    function finish(grade){
+      locked = true;
+      clearTimeout(timeoutId);
+      circle.classList.remove('flash');
+      gradePop.textContent = grade;
+      gradePop.className = `timing-grade-pop ${grade.toLowerCase()} show`;
+      setTimeout(()=>{
+        gradePop.classList.remove('show');
+        overlay.style.display = 'none';
+        tapBtn.removeEventListener('click', onTap);
+        resolve(grade);
+      }, 420);
+    }
+    function onTap(){
+      if(locked) return;
+      if(!flashed){ finish('MISS'); return; }
+      const rt = performance.now() - flashTime;
+      const grade = rt <= windowMs*0.4 ? 'PERFECT' : (rt <= windowMs*1.1 ? 'GOOD' : 'MISS');
+      finish(grade);
+    }
+    tapBtn.addEventListener('click', onTap);
+  });
+}
+
+function runMinigame(skill){
+  if(skill.minigame === 'timing') return runTimingChallenge(skill);
+  if(skill.minigame === 'hold') return runHoldChallenge(skill);
+  if(skill.minigame === 'reaction') return runReactionChallenge(skill);
+  return Promise.resolve('GOOD');
 }
 
 function showUltimateBanner(name){
@@ -1719,6 +2017,14 @@ function showUltimateBanner(name){
     banner.style.display = 'flex';
     setTimeout(()=>{ banner.style.display = 'none'; resolve(); }, 1150);
   });
+}
+
+function triggerBlackFlashEffect(){
+  const banner = document.getElementById('bfBanner');
+  banner.classList.remove('go');
+  void banner.offsetWidth;
+  banner.classList.add('go');
+  setTimeout(()=> banner.classList.remove('go'), 950);
 }
 
 function battleImpact(side, dmg, isCrit, isBlackFlash){
@@ -1742,10 +2048,6 @@ function battleImpact(side, dmg, isCrit, isBlackFlash){
     row.appendChild(pop);
     setTimeout(()=> pop.remove(), 750);
   }
-  if(isBlackFlash){
-    const flash = document.getElementById('blackFlashFlash');
-    flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-  }
 }
 
 function startBattle(enemyDef){
@@ -1759,11 +2061,11 @@ function startBattle(enemyDef){
     turnCount: 0,
     charging: false,
     busy: false,
-    buffMult: 0,
-    buffTurns: 0,
+    defenseBuff: 0,
+    defenseTurns: 0,
     playerMaxHp: playerMaxHP(),
     playerHp: playerMaxHP(),
-    skills: buildSkillsFromEquip(),
+    skills: getBattleSkills(),
     log: [`A battle begins against ${enemyDef.name}!`],
     meta: enemyDef.meta || {},
   };
@@ -1771,72 +2073,13 @@ function startBattle(enemyDef){
   renderBattle();
 }
 
-async function battleAction(actionKey){
-  if(!battleState || battleState.busy) return;
-  let skill = null;
-  if(actionKey !== 'attack'){
-    skill = battleState.skills.find(s=>s.key===actionKey);
-    if(!skill || skill.remaining > 0) return;
-  }
-  battleState.busy = true;
-  renderBattle();
-
-  let grades = [];
-  if(skill && skill.ultimate) await showUltimateBanner(skill.name);
-  else if(skill && skill.circles > 0) grades = await runTimingChallenge(skill);
-
-  if(!battleState) return; // battle ended while the challenge was open
-
-  const label = skill ? skill.name : 'Attack';
-  let dmg = playerAttackDamage() * (skill ? skill.mult : 1);
-  if(battleState.buffMult) dmg *= (1 + battleState.buffMult);
-
-  let perfectCount = 0;
-  if(grades.length){
-    let gradeMultSum = 0;
-    grades.forEach(g=>{
-      if(g === 'PERFECT'){ gradeMultSum += 1.35; perfectCount++; }
-      else if(g === 'GOOD') gradeMultSum += 1.0;
-      else gradeMultSum += 0.6;
-    });
-    dmg *= (gradeMultSum / grades.length);
-  }
-
-  dmg = Math.max(1, Math.round(dmg * (0.85 + Math.random()*0.3)));
-  let isCrit = false;
-  if(Math.random() < 0.15){ dmg = Math.round(dmg * 1.5); isCrit = true; }
-
-  let isBlackFlash = false;
-  if(skill){
-    const bfChance = Math.min(0.75, 0.05 + perfectCount*0.18);
-    if(Math.random() < bfChance){ isBlackFlash = true; dmg = Math.round(dmg * 2.2); }
-  }
-
-  if(skill){
-    skill.remaining = skill.cooldown;
-    if(skill.key === 'reinforcement' && grades.some(g=>g==='PERFECT')){
-      battleState.buffMult = 0.25; battleState.buffTurns = 3;
-      battleState.log.push(`You reinforce your body — next attacks hit harder!`);
-    }
-  }
-
-  battleState.enemyHp = Math.max(0, battleState.enemyHp - dmg);
-  battleState.log.push(isBlackFlash
-    ? `⚡ BLACK FLASH! Your ${label} lands with devastating force for ${dmg.toLocaleString()} damage!`
-    : (isCrit ? `You used ${label} for a CRITICAL ${dmg.toLocaleString()} damage!` : `You used ${label} for ${dmg.toLocaleString()} damage.`));
-  battleImpact('enemy', dmg, isCrit, isBlackFlash);
+function tickSkillCooldowns(actionKey){
   battleState.skills.forEach(s=>{ if(s.key !== actionKey && s.remaining > 0) s.remaining--; });
-  if(battleState.buffTurns > 0){ battleState.buffTurns--; if(battleState.buffTurns <= 0) battleState.buffMult = 0; }
+}
 
-  if(battleState.enemyHp <= 0){
-    battleState.log.push(`${battleState.enemyName} has been defeated!`);
-    battleState.busy = false;
-    renderBattle();
-    setTimeout(()=> endBattle(true), 500);
-    return;
-  }
-
+async function resolveEnemyTurn(){
   battleState.turnCount++;
+  const reduceBy = battleState.defenseTurns > 0 ? battleState.defenseBuff : 0;
   if(battleState.isBoss && battleState.charging){
     battleState.charging = false;
     if(battleState.pattern === 'regen'){
@@ -1845,12 +2088,12 @@ async function battleAction(actionKey){
       battleState.log.push(`${battleState.enemyName} regenerates ${heal.toLocaleString()} HP!`);
     } else if(battleState.pattern === 'frenzy'){
       let total = 0;
-      for(let i=0;i<2;i++){ total += Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3))); }
+      for(let i=0;i<2;i++){ total += Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3) * (1-reduceBy))); }
       battleState.playerHp = Math.max(0, battleState.playerHp - total);
       battleState.log.push(`${battleState.enemyName} enters a frenzy, striking twice for ${total.toLocaleString()} total damage!`);
       battleImpact('player', total, false);
     } else {
-      const edmg = Math.max(1, Math.round(battleState.enemyAtk * 2.4));
+      const edmg = Math.max(1, Math.round(battleState.enemyAtk * 2.4 * (1-reduceBy)));
       battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
       battleState.log.push(`${battleState.enemyName} unleashes a devastating attack for ${edmg.toLocaleString()} damage!`);
       battleImpact('player', edmg, true);
@@ -1862,11 +2105,13 @@ async function battleAction(actionKey){
       : `${battleState.enemyName} begins charging a devastating attack...`;
     battleState.log.push(msg);
   } else {
-    const edmg = Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3)));
+    const edmg = Math.max(1, Math.round(battleState.enemyAtk * (0.85 + Math.random()*0.3) * (1-reduceBy)));
     battleState.playerHp = Math.max(0, battleState.playerHp - edmg);
     battleState.log.push(`${battleState.enemyName} attacks you for ${edmg.toLocaleString()} damage.`);
     battleImpact('player', edmg, false);
   }
+
+  if(battleState.defenseTurns > 0){ battleState.defenseTurns--; if(battleState.defenseTurns <= 0) battleState.defenseBuff = 0; }
 
   if(battleState.playerHp <= 0){
     battleState.log.push(`You have been defeated. Retreating...`);
@@ -1879,7 +2124,65 @@ async function battleAction(actionKey){
   renderBattle();
 }
 
-const SKILL_SOURCE_LABEL = { starter:'Base Skills', technique:'Cursed Technique', companion:'Companion', tool:'Cursed Tool' };
+async function battleAction(actionKey){
+  if(!battleState || battleState.busy) return;
+  const skill = battleState.skills.find(s=>s.key===actionKey);
+  if(!skill || skill.remaining > 0) return;
+  battleState.busy = true;
+  renderBattle();
+
+  let grade;
+  if(skill.ultimate){ await showUltimateBanner(skill.name); grade = 'PERFECT'; }
+  else { grade = await runMinigame(skill); }
+
+  if(!battleState) return; // battle ended while the challenge was open
+  skill.remaining = skill.cooldown;
+
+  if(skill.defense){
+    const reducePct = grade === 'PERFECT' ? 0.6 : (grade === 'GOOD' ? 0.4 : 0.2);
+    const healPct = grade === 'PERFECT' ? 0.12 : (grade === 'GOOD' ? 0.07 : 0.03);
+    battleState.defenseBuff = reducePct;
+    battleState.defenseTurns = 2;
+    const heal = Math.round(battleState.playerMaxHp * healPct);
+    battleState.playerHp = Math.min(battleState.playerMaxHp, battleState.playerHp + heal);
+    battleState.log.push(`You brace with ${skill.name} (${grade}) — incoming damage cut ${(reducePct*100)|0}% for 2 turns, healed ${heal.toLocaleString()} HP.`);
+    tickSkillCooldowns(actionKey);
+    await resolveEnemyTurn();
+    return;
+  }
+
+  let dmg = playerAttackDamage() * skill.mult;
+  const gradeMult = grade === 'PERFECT' ? 1.35 : (grade === 'GOOD' ? 1.0 : 0.6);
+  dmg *= gradeMult;
+  dmg = Math.max(1, Math.round(dmg * (0.85 + Math.random()*0.3)));
+
+  let isCrit = false;
+  if(Math.random() < 0.15){ dmg = Math.round(dmg * 1.5); isCrit = true; }
+
+  let isBlackFlash = false;
+  const bfChance = Math.min(0.6, 0.05 + (grade === 'PERFECT' ? 0.25 : 0));
+  if(Math.random() < bfChance){ isBlackFlash = true; dmg = Math.round(dmg * 2.3); }
+
+  battleState.enemyHp = Math.max(0, battleState.enemyHp - dmg);
+  battleState.log.push(isBlackFlash
+    ? `⚡ BLACK FLASH! Your ${skill.name} lands with devastating force for ${dmg.toLocaleString()} damage!`
+    : (isCrit ? `You used ${skill.name} for a CRITICAL ${dmg.toLocaleString()} damage!` : `You used ${skill.name} for ${dmg.toLocaleString()} damage.`));
+  battleImpact('enemy', dmg, isCrit, isBlackFlash);
+  if(isBlackFlash) triggerBlackFlashEffect();
+  tickSkillCooldowns(actionKey);
+
+  if(battleState.enemyHp <= 0){
+    battleState.log.push(`${battleState.enemyName} has been defeated!`);
+    battleState.busy = false;
+    renderBattle();
+    setTimeout(()=> endBattle(true), 700);
+    return;
+  }
+
+  await resolveEnemyTurn();
+}
+
+const SKILL_SOURCE_LABEL = { starter:'Base Skill', technique:'Cursed Technique', companion:'Companion', tool:'Cursed Tool', universal:'Jujutsu Skill' };
 function renderBattle(){
   if(!battleState) return;
   const enemyPct = Math.max(0, (battleState.enemyHp/battleState.enemyMaxHp)*100);
@@ -1897,11 +2200,11 @@ function renderBattle(){
 
   const busy = battleState.busy;
   const actionsEl = document.getElementById('battleActions');
-  let html = `<button class="btn" data-action="attack" ${busy?'disabled':''}>Attack (${playerAttackDamage().toLocaleString()})</button>`;
+  let html = '';
   battleState.skills.forEach(s=>{
     const ready = s.remaining <= 0 && !busy;
     const cls = s.ultimate ? 'blood' : (ready ? '' : 'secondary');
-    const tag = s.ultimate ? ' 🌀' : '';
+    const tag = s.ultimate ? ' 🌀' : (s.defense ? ' 🛡' : '');
     html += `<button class="btn ${cls}" data-action="${s.key}" ${ready?'':'disabled'} title="${SKILL_SOURCE_LABEL[s.source]||''}${s.itemName?': '+s.itemName:''}">${s.name}${tag}${s.remaining>0?` (${s.remaining})`:''}</button>`;
   });
   actionsEl.innerHTML = html;
@@ -2096,6 +2399,8 @@ function renderStats(){
     return `<div class="stat-line"><span>${c.label} bound</span><span class="mono">${count}</span></div>`;
   }).join('');
   renderAscension();
+  renderLoadoutPanel();
+  renderUniversalSkillsPanel();
   renderUpgrades();
 }
 
